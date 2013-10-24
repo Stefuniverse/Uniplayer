@@ -1,10 +1,9 @@
-
+//Imports File
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 
+//Basic Media-Player functionality
 import javax.swing.*;
-
 import javafx.scene.media.MediaPlayer;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -13,16 +12,16 @@ import javafx.scene.media.Media;
 import javafx.stage.Stage;
 import javafx.scene.media.MediaView;
 
+//Buttons
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.event.*;
+
 
 
 
 public class medien extends Application {
-
-
-    public static void main(String args[])
-    {
-    	launch();
-    }
+	
     public void start(Stage primaryStage)
     
     {
@@ -30,17 +29,39 @@ public class medien extends Application {
         Group root = new Group();
         Scene scene = new Scene(root,1000,1000);
         Media audio = new Media(geturl());
-        
-        MediaPlayer MP = new MediaPlayer(audio);
+         final MediaPlayer MP = new MediaPlayer(audio);
         MP.setAutoPlay(true);
         MediaView mediaview = new MediaView(MP);
+        
+        final Button startpause = new Button();
+        startpause.setText("Pause");
+        startpause.setOnAction(new EventHandler<ActionEvent>() {
+ 
+            @Override
+            public void handle(ActionEvent event) {
+                if ("Pause".equals(startpause.getText()))
+                {
+                	MP.pause();
+                	startpause.setText("Play");
+                }
+                else
+                {
+                	MP.play();
+                	startpause.setText("Pause");
+                }
+            }
+        });
+        
+        
         ((Group)scene.getRoot()).getChildren().add(mediaview);
+        ((Group)scene.getRoot()).getChildren().add(startpause);
         primaryStage.setScene(scene);
         primaryStage.show();
 	        	
 	}
-    
-    String geturl()
+	
+	@SuppressWarnings("deprecation")
+	String geturl()
     {
     	File read;
     	String URL = null;
@@ -73,5 +94,9 @@ public class medien extends Application {
         return URL;
     	
     }
-}
 
+	public static void main(String args[])
+    {
+    	launch();
+    }
+}
