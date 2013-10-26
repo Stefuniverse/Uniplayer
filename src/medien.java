@@ -1,9 +1,12 @@
 //Imports File
-import java.io.File;
+import java.io.*;
 import java.net.MalformedURLException;
+
+
 
 //Basic Media-Player functionality
 import javax.swing.*;
+
 import javafx.scene.media.MediaPlayer;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -11,11 +14,15 @@ import javafx.scene.Scene;
 import javafx.scene.media.Media;
 import javafx.stage.Stage;
 import javafx.scene.media.MediaView;
+import java.util.*;
 
+
+import javafx.scene.paint.Color;
 //Buttons
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.event.*;
+import javafx.geometry.Insets;
 
 
 
@@ -26,12 +33,13 @@ public class medien extends Application {
     
     {
         primaryStage.setTitle("Uniplayer-Beta");
-        Group root = new Group();
+        BorderPane root = new BorderPane();
         Scene scene = new Scene(root,1000,1000);
-        Media audio = new Media(geturl());
-         final MediaPlayer MP = new MediaPlayer(audio);
-        MP.setAutoPlay(true);
-        MediaView mediaview = new MediaView(MP);
+        final List<MediaPlayer> MP = new ArrayList<MediaPlayer>();
+        MP.add(new MediaPlayer(new Media(geturl())));
+        final MediaView mediaview = new MediaView(MP.get(0));
+        HBox bb = new HBox();
+        
         
         final Button startpause = new Button();
         startpause.setText("Pause");
@@ -41,20 +49,39 @@ public class medien extends Application {
             public void handle(ActionEvent event) {
                 if ("Pause".equals(startpause.getText()))
                 {
-                	MP.pause();
+                	MP.get((MP.size()-1)).pause();
                 	startpause.setText("Play");
                 }
                 else
                 {
-                	MP.play();
+                	MP.get((MP.size()-1)).play();
                 	startpause.setText("Pause");
                 }
             }
         });
         
+        final Button chosefile = new Button();
+        chosefile.setText("Pick a file");
+        chosefile.setOnAction(new EventHandler<ActionEvent>() {
+ 
+            @Override
+            public void handle(ActionEvent event) {
+            	MP.get(MP.size()-1).stop();
+            	MP.add(new MediaPlayer(new Media(geturl())));
+            	mediaview.setMediaPlayer(MP.get((MP.size()-1)));
+            	MP.get((MP.size()-1)).play();
+            
+            	
+            }
+        });
         
-        ((Group)scene.getRoot()).getChildren().add(mediaview);
-        ((Group)scene.getRoot()).getChildren().add(startpause);
+        //Layout
+        bb.getChildren().addAll(startpause, chosefile);
+        bb.setPadding(new Insets(15, 12, 15, 12));
+        root.setBottom(bb);
+        root.setCenter(mediaview);
+        MP.get(0).setAutoPlay(true);
+        scene.setFill(Color.BLACK);
         primaryStage.setScene(scene);
         primaryStage.show();
 	        	
