@@ -21,6 +21,7 @@ import java.util.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.event.*;
+import javafx.scene.input.*;
 import javafx.geometry.Insets;
 import javafx.scene.paint.Color;
 
@@ -29,21 +30,17 @@ import javafx.scene.paint.Color;
 
 public class medien extends Application {
 	
+	final List<MediaPlayer> MP = new ArrayList<MediaPlayer>();
+    final List<Label> Title = new ArrayList<Label>();
+    int current;
+    final MediaView mediaview = new MediaView();
 
 	public void start(Stage primaryStage)
     
     {
         BorderPane root = new BorderPane();
         Scene scene = new Scene(root,1000,1000);
-        final List<MediaPlayer> MP = new ArrayList<MediaPlayer>();
-        final List<Label> Title = new ArrayList<Label>();
         
-        String NewT[] = geturl();
-        Title.add(new Label(NewT[1]));
-        primaryStage.setTitle("Uniplayer-Beta - " + NewT[1]);
-        MP.add(new MediaPlayer(new Media(NewT[0])));
-        
-        final MediaView mediaview = new MediaView(MP.get(0));
         final HBox bb = new HBox();
         final VBox list = new VBox();
         
@@ -56,13 +53,19 @@ public class medien extends Application {
             public void handle(ActionEvent event) {
                 if ("Pause".equals(startpause.getText()))
                 {
-                	MP.get((MP.size()-1)).pause();
-                	startpause.setText("Play");
+                	if (!MP.isEmpty())
+                	{
+                		MP.get(current).pause();
+                		startpause.setText("Play");
+                	}
                 }
                 else
                 {
-                	MP.get((MP.size()-1)).play();
-                	startpause.setText("Pause");
+                	if (!MP.isEmpty())
+                	{
+                		MP.get(current).play();
+                		startpause.setText("Pause");
+                	}
                 }
             }
         });
@@ -75,29 +78,35 @@ public class medien extends Application {
             public void handle(ActionEvent event) {
             	
             	String NewT[] = geturl();
-            	MP.get(MP.size()-1).stop();
-            	MP.add(new MediaPlayer(new Media(NewT[0])));
-            	mediaview.setMediaPlayer(MP.get((MP.size()-1)));
-            	MP.get((MP.size()-1)).play();
             	
+            	if (!MP.isEmpty())
+            	{
+            		MP.get(current).stop();
+            	}
+            	
+            	MP.add(new MediaPlayer(new Media(NewT[0])));
+            	MP.get((MP.size()-1)).play();
+            	current = (MP.size()-1);
+            	updateview();
+            	
+            	Title.add(Labelbuilder(NewT[1]));
             	list.getChildren().addAll(Title.get((Title.size()-1)));
-            
+    
             	
             }
         });
         
         //Layout
         bb.getChildren().addAll(startpause, chosefile);
-        list.getChildren().addAll(Title.get(0));
         bb.setPadding(new Insets(15, 12, 15, 12));
         bb.setPadding(new Insets(20, 9, 0, 0));
         root.setBottom(bb);
         root.setRight(list);
         root.setCenter(mediaview);
-        MP.get(0).setAutoPlay(true);
         scene.setFill(Color.BLACK);
         primaryStage.setScene(scene);
         primaryStage.show();
+        
 	        	
 	}
 	
@@ -136,6 +145,29 @@ public class medien extends Application {
         return URL;
     	
     }
+	
+	Label Labelbuilder(String Input)
+	{
+		final Label l = new Label(Input);
+		l.setStyle("-fx-background-color: #333333;"
+				+ "-fx-text-fill:white;");
+		l.setOnMouseClicked(new EventHandler<MouseEvent>() {
+		    @Override public void handle(MouseEvent e) {
+		        MP.get(current).stop();
+		        current = Title.indexOf(l);
+		        MP.get(current).play();
+		        updateview();
+		        
+		        
+		    }
+		});
+		return l;
+	}
+	
+	void updateview()
+	{
+		mediaview.setMediaPlayer(MP.get(current));
+	}
 
 	public static void main(String args[])
     {
