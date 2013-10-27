@@ -36,7 +36,6 @@ public class medien extends Application {
     final MediaView mediaview = new MediaView();
 
 	public void start(Stage primaryStage)
-    
     {
         BorderPane root = new BorderPane();
         Scene scene = new Scene(root,1000,1000);
@@ -70,9 +69,9 @@ public class medien extends Application {
             }
         });
         
-        final Button chosefile = new Button();
-        chosefile.setText("Pick a file");
-        chosefile.setOnAction(new EventHandler<ActionEvent>() {
+        final Button playatonce = new Button();
+        playatonce.setText("Play at once");
+        playatonce.setOnAction(new EventHandler<ActionEvent>() {
  
             @Override
             public void handle(ActionEvent event) {
@@ -84,22 +83,43 @@ public class medien extends Application {
             		MP.get(current).stop();
             	}
             	
-            	MP.add(new MediaPlayer(new Media(NewT[0])));
+            	MP.add(Playerbuilder(NewT[0]));
             	MP.get((MP.size()-1)).play();
             	current = (MP.size()-1);
-            	updateview();
             	
             	Title.add(Labelbuilder(NewT[1]));
             	list.getChildren().addAll(Title.get((Title.size()-1)));
+            	
+            	updateview();
+    
+            	
+            }
+        });
+        
+        final Button playlater = new Button();
+        playlater.setText("PLay later");
+        playlater.setOnAction(new EventHandler<ActionEvent>() {
+ 
+            @Override
+            public void handle(ActionEvent event) {
+            	
+            	String NewT[] = geturl();
+            	
+            	MP.add(Playerbuilder(NewT[0]));
+            	
+            	Title.add(Labelbuilder(NewT[1]));
+            	list.getChildren().addAll(Title.get((Title.size()-1)));
+            	
+            	updateview();
     
             	
             }
         });
         
         //Layout
-        bb.getChildren().addAll(startpause, chosefile);
+        bb.getChildren().addAll(startpause, playatonce, playlater);
         bb.setPadding(new Insets(15, 12, 15, 12));
-        bb.setPadding(new Insets(20, 9, 0, 0));
+        list.setPadding(new Insets(20, 9, 0, 0));
         root.setBottom(bb);
         root.setRight(list);
         root.setCenter(mediaview);
@@ -143,14 +163,15 @@ public class medien extends Application {
            };
         }
         return URL;
-    	
+        
     }
 	
 	Label Labelbuilder(String Input)
 	{
 		final Label l = new Label(Input);
 		l.setStyle("-fx-background-color: #333333;"
-				+ "-fx-text-fill:white;");
+				+ "-fx-text-fill: white;"
+				+ "-fx-font-size: 15");
 		l.setOnMouseClicked(new EventHandler<MouseEvent>() {
 		    @Override public void handle(MouseEvent e) {
 		        MP.get(current).stop();
@@ -162,6 +183,25 @@ public class medien extends Application {
 		    }
 		});
 		return l;
+	}
+	
+	MediaPlayer Playerbuilder(String URL)
+	{
+		final MediaPlayer m = new MediaPlayer(new Media(URL));
+		
+		m.setOnEndOfMedia(new Runnable() {
+			@Override public void run() {
+				MP.get(current).stop();
+				if (MP.indexOf(m) != MP.size()-1);
+				{
+					MP.get(MP.indexOf(m)+1).play();
+					current++;
+					updateview();
+				}
+			}
+		});
+		
+		return m;
 	}
 	
 	void updateview()
