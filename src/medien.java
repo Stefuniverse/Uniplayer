@@ -35,8 +35,10 @@ public class medien extends Application {
     int current;
     final MediaView mediaview = new MediaView();
 
-	public void start(Stage primaryStage)
+	public void start(final Stage pS)
     {
+		pS.setTitle("Uniplayer-Alpha");
+		
         BorderPane root = new BorderPane();
         Scene scene = new Scene(root,1000,1000);
         
@@ -81,16 +83,24 @@ public class medien extends Application {
             	if (!MP.isEmpty())
             	{
             		MP.get(current).stop();
+            		Title.get(current).setStyle("-fx-text-fill: white;");
             	}
             	
-            	MP.add(Playerbuilder(NewT[0]));
+            	MP.add(Playerbuilder(NewT[0],pS));
             	MP.get((MP.size()-1)).play();
+            	
             	current = (MP.size()-1);
             	
-            	Title.add(Labelbuilder(NewT[1]));
+            	Title.add(Labelbuilder(NewT[1],pS));
             	list.getChildren().addAll(Title.get((Title.size()-1)));
+ 
+            	//Didn't accepted the rest of the style (kinda magic?)
+            	Title.get(current).setStyle("-fx-text-fill: #7DA1EB;"
+            								+ "-fx-background-color: #333333;"
+            								+ "-fx-font-size: 15;");
             	
-            	updateview();
+            	
+            	updateview(pS);
     
             	
             }
@@ -103,15 +113,17 @@ public class medien extends Application {
             @Override
             public void handle(ActionEvent event) {
             	
-            	if (0 != MP.indexOf(current))
+            	if ((0 != current) && (!MP.isEmpty()))
             	{
             		MP.get(current).stop();
+            		Title.get(current).setStyle("-fx-text-fill: white;");
                 	current--;
+                	Title.get(current).setStyle("-fx-text-fill: #7DA1EB;");
                 	MP.get(current).play();
             	}
             	
             	
-            	updateview();
+            	updateview(pS);
     
             	
             }
@@ -124,15 +136,17 @@ public class medien extends Application {
             @Override
             public void handle(ActionEvent event) {
             	
-            	if ((MP.size()-1) != MP.indexOf(current))
+            	if (((MP.size()-1) != current) && (!MP.isEmpty()))
             	{
             		MP.get(current).stop();
+            		Title.get(current).setStyle("-fx-text-fill: white;");
                 	current++;
+                	Title.get(current).setStyle("-fx-text-fill: #7DA1EB;");
                 	MP.get(current).play();
             	}
             	
             	
-            	updateview();
+            	updateview(pS);
     
             	
             }
@@ -147,12 +161,12 @@ public class medien extends Application {
             	
             	String NewT[] = geturl();
             	
-            	MP.add(Playerbuilder(NewT[0]));
+            	MP.add(Playerbuilder(NewT[0],pS));
             	
-            	Title.add(Labelbuilder(NewT[1]));
+            	Title.add(Labelbuilder(NewT[1],pS));
             	list.getChildren().addAll(Title.get((Title.size()-1)));
             	
-            	updateview();
+            	updateview(pS);
     
             	
             }
@@ -166,9 +180,8 @@ public class medien extends Application {
         root.setRight(list);
         root.setCenter(mediaview);
         scene.setFill(Color.BLACK);
-        primaryStage.setScene(scene);
-        primaryStage.show();
-        
+        pS.setScene(scene);
+        pS.show();
 	        	
 	}
 	
@@ -208,37 +221,63 @@ public class medien extends Application {
         
     }
 	
-	Label Labelbuilder(String Input)
+	Label Labelbuilder(String Input, final Stage s)
 	{
 		final Label l = new Label(Input);
 		l.setStyle("-fx-background-color: #333333;"
 				+ "-fx-text-fill: white;"
 				+ "-fx-font-size: 15");
+		
 		l.setOnMouseClicked(new EventHandler<MouseEvent>() {
 		    @Override public void handle(MouseEvent e) {
 		        MP.get(current).stop();
+		        Title.get(current).setStyle("-fx-text-fill: white;");
 		        current = Title.indexOf(l);
 		        MP.get(current).play();
-		        updateview();
-		        
-		        
+		        Title.get(current).setStyle("-fx-text-fill: #7DA1EB;");
+		        updateview(s);
+		            
 		    }
 		});
+		
+		l.setOnMouseEntered(new EventHandler<MouseEvent>() {
+		    @Override public void handle(MouseEvent e) {
+		        l.setStyle("-fx-text-fill : #FF6600");
+		            
+		    }
+		});
+		
+		l.setOnMouseExited(new EventHandler<MouseEvent>() {
+		    @Override public void handle(MouseEvent e) {
+		    	if (Title.indexOf(l) != current)
+		    	{
+		    		l.setStyle("-fx-text-fill : white");
+		    	}
+		    	else
+		    	{
+		    		Title.get(current).setStyle("-fx-text-fill: #7DA1EB;");
+		    	}
+		            
+		    }
+		});
+		
 		return l;
 	}
 	
-	MediaPlayer Playerbuilder(String URL)
+	MediaPlayer Playerbuilder(String URL, final Stage s)
 	{
 		final MediaPlayer m = new MediaPlayer(new Media(URL));
 		
 		m.setOnEndOfMedia(new Runnable() {
 			@Override public void run() {
-				MP.get(current).stop();
+				
+				Title.get(current).setStyle("-fx-text-fill: white;");
 				if (MP.indexOf(m) != MP.size()-1);
 				{
 					MP.get(MP.indexOf(m)+1).play();
 					current++;
-					updateview();
+					Title.get(current).setStyle("-fx-text-fill: #7DA1EB;");
+					updateview(s);
 				}
 			}
 		});
@@ -246,9 +285,11 @@ public class medien extends Application {
 		return m;
 	}
 	
-	void updateview()
+	void updateview(Stage s)
 	{
 		mediaview.setMediaPlayer(MP.get(current));
+		s.setTitle("Uniplayer-Alpha " + Title.get(current).getText());
+		
 		
 	}
 
