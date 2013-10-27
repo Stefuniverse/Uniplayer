@@ -1,21 +1,29 @@
 //By Stefan Pawlowski updated; 26.10.2013 Uniplayer
 
 //Imports File
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.io.*;
 import java.net.MalformedURLException;
 
 
 
+
+
+
+
 //Basic Media-Player functionality
 import javax.swing.*;
+
 import javafx.scene.media.MediaPlayer;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.media.Media;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.scene.media.MediaView;
-import java.util.*;
 
+import java.util.*;
 
 //Buttons and layout
 import javafx.scene.control.*;
@@ -23,6 +31,7 @@ import javafx.scene.layout.*;
 import javafx.event.*;
 import javafx.scene.input.*;
 import javafx.geometry.Insets;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.paint.Color;
 
 
@@ -40,7 +49,6 @@ public class medien extends Application {
 		pS.setTitle("Uniplayer-Alpha");
 		
         BorderPane root = new BorderPane();
-        Scene scene = new Scene(root,1000,1000);
         
         final HBox bb = new HBox();
         final VBox list = new VBox();
@@ -94,7 +102,7 @@ public class medien extends Application {
             	Title.add(Labelbuilder(NewT[1],pS));
             	list.getChildren().addAll(Title.get((Title.size()-1)));
  
-            	//Didn't accepted the rest of the style (kinda magic?)
+            	//Didn't accept the rest of the style (kinda magic?)
             	Title.get(current).setStyle("-fx-text-fill: #7DA1EB;"
             								+ "-fx-background-color: #333333;"
             								+ "-fx-font-size: 15;");
@@ -179,6 +187,17 @@ public class medien extends Application {
         root.setBottom(bb);
         root.setRight(list);
         root.setCenter(mediaview);
+        Screen screen = Screen.getPrimary();
+        Rectangle2D bounds = screen.getVisualBounds();
+
+        pS.setX(bounds.getMinX());
+        pS.setY(bounds.getMinY());
+        pS.setWidth(bounds.getWidth());
+        pS.setHeight(bounds.getHeight());
+        mediaview.prefWidth(bounds.getWidth()*0.7);
+        list.prefWidth(bounds.getWidth()*0.3);
+
+        Scene scene = new Scene(root);
         scene.setFill(Color.BLACK);
         pS.setScene(scene);
         pS.show();
