@@ -96,6 +96,48 @@ public class medien extends Application {
             }
         });
         
+        final Button prev = new Button();
+        prev.setText("Prev");
+        prev.setOnAction(new EventHandler<ActionEvent>() {
+ 
+            @Override
+            public void handle(ActionEvent event) {
+            	
+            	if (0 != MP.indexOf(current))
+            	{
+            		MP.get(current).stop();
+                	current--;
+                	MP.get(current).play();
+            	}
+            	
+            	
+            	updateview();
+    
+            	
+            }
+        });
+        
+        final Button next = new Button();
+        next.setText("Next");
+        next.setOnAction(new EventHandler<ActionEvent>() {
+ 
+            @Override
+            public void handle(ActionEvent event) {
+            	
+            	if ((MP.size()-1) != MP.indexOf(current))
+            	{
+            		MP.get(current).stop();
+                	current++;
+                	MP.get(current).play();
+            	}
+            	
+            	
+            	updateview();
+    
+            	
+            }
+        });
+        
         final Button playlater = new Button();
         playlater.setText("PLay later");
         playlater.setOnAction(new EventHandler<ActionEvent>() {
@@ -117,7 +159,7 @@ public class medien extends Application {
         });
         
         //Layout
-        bb.getChildren().addAll(startpause, playatonce, playlater);
+        bb.getChildren().addAll(startpause, playatonce, playlater, prev, next);
         bb.setPadding(new Insets(15, 12, 15, 12));
         list.setPadding(new Insets(20, 9, 0, 0));
         root.setBottom(bb);
@@ -207,6 +249,7 @@ public class medien extends Application {
 	void updateview()
 	{
 		mediaview.setMediaPlayer(MP.get(current));
+		
 	}
 
 	public static void main(String args[])
