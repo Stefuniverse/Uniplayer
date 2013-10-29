@@ -1,10 +1,11 @@
 //By Stefan Pawlowski updated; 26.10.2013 Uniplayer
 
 //Imports File
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
+
 import java.io.*;
 import java.net.MalformedURLException;
+
+
 
 
 
@@ -23,6 +24,11 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.scene.media.MediaView;
 
+import com.xuggle.xuggler.IContainer;
+import com.xuggle.xuggler.IStream;
+import com.xuggle.xuggler.IStreamCoder;
+import com.xuggle.xuggler.ICodec;
+
 import java.util.*;
 
 //Buttons and layout
@@ -39,8 +45,10 @@ import javafx.scene.paint.Color;
 
 public class medien extends Application {
 	
-	final List<MediaPlayer> MP = new ArrayList<MediaPlayer>();
-    final List<Label> Title = new ArrayList<Label>();
+	final int[] width = null;
+	final int[] height = null;
+	 List<MediaPlayer> MP = new ArrayList<MediaPlayer>();
+     List<Label> Title = new ArrayList<Label>();
     int current;
     final MediaView mediaview = new MediaView();
 
@@ -194,8 +202,6 @@ public class medien extends Application {
         pS.setY(bounds.getMinY());
         pS.setWidth(bounds.getWidth());
         pS.setHeight(bounds.getHeight());
-        mediaview.prefWidth(bounds.getWidth()*0.7);
-        list.prefWidth(bounds.getWidth()*0.3);
 
         Scene scene = new Scene(root);
         scene.setFill(Color.BLACK);
@@ -227,8 +233,9 @@ public class medien extends Application {
            read = fileChooser.getSelectedFile();
            try
            {
-           URL[0] = read.toURL().toExternalForm().replace(" ", "%20");
-           URL[1] = read.getName();
+        	   getdimensions(read.getPath());
+        	   URL[0] = read.toURL().toExternalForm().replace(" ", "%20");
+        	   URL[1] = read.getName();
            }
            catch (MalformedURLException ex)
            {
@@ -309,7 +316,73 @@ public class medien extends Application {
 		mediaview.setMediaPlayer(MP.get(current));
 		s.setTitle("Uniplayer-Alpha " + Title.get(current).getText());
 		
+		Screen screen = Screen.getPrimary();
+        Rectangle2D bounds = screen.getVisualBounds();
+        
+		mediaview.setScaleX((bounds.getWidth()/width[current])*0.7);
+		//bounds.getWidth()/(MP.get(current).getMedia().getWidth()*0.7)
 		
+	}
+	
+
+	void getdimensions(String Path)
+	{
+		// Create a Xuggler container object
+		
+		IContainer container = IContainer.make();
+
+		// Open up the container
+		if (container.open(Path, IContainer.Type.READ, null) < 0)
+		{
+			System.out.println("Pathfehler");
+			width[width.length] = 0;
+			height[height.length] = 0;
+			
+		}
+
+		// query how many streams the call to open found
+		int numStreams = container.getNumStreams();
+
+		// and iterate through the streams to find the first video stream
+		int videoStreamId = -1;
+		IStreamCoder videoCoder = null;
+		for (int i = 0; i < numStreams; i++) {
+		  // Find the stream object
+		  IStream stream = container.getStream(i);
+		  // Get the pre-configured decoder that can decode this stream;
+		  IStreamCoder coder = stream.getStreamCoder();
+
+		  if (coder.getCodecType() == ICodec.Type.CODEC_TYPE_VIDEO) {
+		    videoStreamId = i;
+		    videoCoder = coder;
+		    break;
+		  }
+		}
+		if (videoStreamId == -1)
+			if (container.open(Path, IContainer.Type.READ, null) < 0)
+			{
+				System.out.println("NoVideo");
+				width[width.length] = 0;
+				height[height.length] = 0;
+				
+			}
+
+		/*
+		 * Now we have found the video stream in this file. 
+		 * Let's open up our decoder so it can do work.
+		 */
+		if (videoCoder.open() < 0)
+			if (container.open(Path, IContainer.Type.READ, null) < 0)
+			{
+				System.out.println("DecoderError");
+				width[width.length] = 0;
+				height[height.length] = 0;
+				
+			}
+
+		// here you have what you need
+		height[height.length] = videoCoder.getHeight();
+		width[width.length] = videoCoder.getWidth();
 	}
 
 	public static void main(String args[])
