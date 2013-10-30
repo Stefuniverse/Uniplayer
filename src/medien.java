@@ -33,13 +33,30 @@ import javafx.scene.paint.Color;
 
 public class medien extends Application {
 	
-	static final String Layout_Main = ("-fx-background-color: #333333;"
+	static final String Layout_Main1 = ("-fx-background-color: #333333;"
 				+ "-fx-text-fill: white;"
 				+ "-fx-font-size: 15;");
 	
-	static final String Layout_active = ("-fx-text-fill: #7DA1EB;");
+	static final String Layout_Main2 = ("-fx-background-color: #666666;"
+			+ "-fx-text-fill: white;"
+			+ "-fx-font-size: 15;");
 	
-	static final String Layout_Action = ("-fx-text-fill : #FF6600");
+	
+	static final String Layout_active1 = ("-fx-text-fill: #7DA1EB;"
+			+ "-fx-background-color: #333333;"
+			+ "-fx-font-size: 15;");
+	
+	static final String Layout_active2 = ("-fx-text-fill: #7DA1EB;"
+			+ "-fx-background-color: #666666;"
+			+ "-fx-font-size: 15;");
+	
+	static final String Layout_Action1 = ("-fx-text-fill: #FF6600;"
+			+ "-fx-background-color: #333333;"
+			+ "-fx-font-size: 15;");
+	
+	static final String Layout_Action2 = ("-fx-text-fill: #FF6600;"
+			+ "-fx-background-color: #666666;"
+			+ "-fx-font-size: 15;");
 	
 	MediaView mediaview = new MediaView();
 	final BorderPane root = new BorderPane();
@@ -55,10 +72,10 @@ public class medien extends Application {
     
 	int[] width = null;
 	int[] height = null;
-	String[] URL = null;
+	List<String> URL = new LinkedList<String>();
     List<Label> Title = new ArrayList<Label>();
     MediaPlayer MP;
-    int current;
+    int current = 0;
 
 	public void start(final Stage pS)
     {
@@ -70,7 +87,7 @@ public class medien extends Application {
         playlater.setText("PLay later");
         pS.setTitle("Uniplayer-Alpha");
         
-        
+					
         startpause.setOnAction(new EventHandler<ActionEvent>() {
         	@Override 
         	public void handle(ActionEvent event) {
@@ -86,7 +103,6 @@ public class medien extends Application {
             public void handle(ActionEvent event) {
             	
             	geturl(pS);
-            	
             	updateview(pS, Title.size()-1);
     
             	
@@ -177,7 +193,11 @@ public class medien extends Application {
            try
            {
         	   //getdimensions(read.getPath());
-        	   URL[URL.length] = ( read.toURL().toExternalForm().replace(" ", "%20"));
+        	   
+        		   
+        	URL.add(read.toURL().toExternalForm().replace(" ", "%20"));
+        	   
+
         	   Title.add(Labelbuilder(read.getName(),pS));
                
            		list.getChildren().addAll(Title.get((Title.size()-1)));
@@ -194,7 +214,19 @@ public class medien extends Application {
 	Label Labelbuilder(String Input, final Stage s)
 	{
 		final Label l = new Label(Input);
-		l.setStyle(Layout_Main);
+		
+		if (Title.size() % 2 != 0) {
+			
+			l.setStyle(Layout_Main1);
+			
+		}
+		
+		else {
+			
+			l.setStyle(Layout_Main2);
+			
+		}
+		
 		
 		l.setOnMouseClicked(new EventHandler<MouseEvent>() {
 		    @Override public void handle(MouseEvent e) {
@@ -206,7 +238,15 @@ public class medien extends Application {
 		
 		l.setOnMouseEntered(new EventHandler<MouseEvent>() {
 		    @Override public void handle(MouseEvent e) {
-		        l.setStyle(Layout_Action);
+		    	
+		    	if (Title.indexOf(l) % 2 != 0) {
+		        
+		    		l.setStyle(Layout_Action1);
+		    	
+		    	}
+		    	else {
+		    		l.setStyle(Layout_Action2);
+		    	}
 		            
 		    }
 		});
@@ -215,11 +255,29 @@ public class medien extends Application {
 		    @Override public void handle(MouseEvent e) {
 		    	if (Title.indexOf(l) != current)
 		    	{
-		    		l.setStyle(Layout_Main);
+		    		if (Title.indexOf(l) % 2 != 0) {
+		    			
+		    			l.setStyle(Layout_Main1);
+		    			
+		    		}
+		    		
+		    		else {
+		    			
+		    			l.setStyle(Layout_Main2);
+		    		}
 		    	}
+		    	
 		    	else
+		    		
 		    	{
-		    		Title.get(current).setStyle(Layout_active);
+		    		if (Title.indexOf(l) % 2 != 0) {
+				        
+				    	l.setStyle(Layout_active1);
+				    	
+				    	}
+				    else {
+				    	l.setStyle(Layout_active2);
+				    	}
 		    	}
 		            
 		    }
@@ -228,32 +286,54 @@ public class medien extends Application {
 		return l;
 	}
 	
-	MediaPlayer Playerbuilder(String URL, final Stage s)
+	
+	void updateview(final Stage s, int Newtoplay)
 	{
-		final MediaPlayer m = new MediaPlayer(new Media(URL));
+		if (MP != null) {
+			
+			MP.stop();
 		
-		m.setOnEndOfMedia(new Runnable() {
+			if ((current % 2) != 0) {
+			
+				Title.get(current).setStyle(Layout_Main1);
+			
+			}
+		
+			else {
+			
+				Title.get(current).setStyle(Layout_Main2);
+			}
+		}
+		
+		
+		
+		MP = new MediaPlayer(new Media(URL.get(Newtoplay)));
+		
+        MP.setOnEndOfMedia(new Runnable() {
 			@Override public void run() {
 				
-				Title.get(current).setStyle(Layout_Main);
-				if (Title.indexOf(m) != Title.size()-1) {
+				if (current != Title.size()-1) {
 					
 					updateview(s, current++);
+					
+					}
 				}
-			}
-		});
-		
-		return m;
-	}
-	
-	void updateview(Stage s, int Newtoplay)
-	{
-		
-		MP = new MediaPlayer(new Media(URL[Newtoplay]));
+			});
+        
 		MP.play();
-		Title.get(current).setStyle(Layout_Main);
+		
 		current = Newtoplay;
-		Title.get(current).setStyle(Layout_active);
+		
+		if ((current % 2) != 0) {
+			
+			Title.get(current).setStyle(Layout_active1);
+		
+		}
+	
+		else {
+		
+			Title.get(current).setStyle(Layout_active2);
+		}
 		
 		mediaview.setMediaPlayer(MP);
 		
@@ -288,6 +368,4 @@ public class medien extends Application {
     	launch();
     }
 
-
-	
 }
