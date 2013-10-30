@@ -58,6 +58,8 @@ public class medien extends Application {
 			+ "-fx-background-color: #666666;"
 			+ "-fx-font-size: 15;");
 	
+	static final String Layout_Playlist = ("-fx-background-color: #333333;");
+	
 	MediaView mediaview = new MediaView();
 	final BorderPane root = new BorderPane();
     final HBox bb = new HBox();
@@ -160,7 +162,9 @@ public class medien extends Application {
         pS.setY(bounds.getMinY());
         pS.setWidth(bounds.getWidth());
         pS.setHeight(bounds.getHeight());
-        mediaview.setFitWidth(bounds.getWidth()*0.7);
+        list.setMinWidth(bounds.getWidth()*0.1);
+        list.setStyle(Layout_Playlist);
+        mediaview.setFitWidth(bounds.getWidth()*0.8);
 		mediaview.setFitHeight(bounds.getHeight()*0.8);
 
         Scene scene = new Scene(root);
@@ -214,6 +218,11 @@ public class medien extends Application {
 	Label Labelbuilder(String Input, final Stage s)
 	{
 		final Label l = new Label(Input);
+		
+		Screen screen = Screen.getPrimary();
+        Rectangle2D bounds = screen.getVisualBounds();
+		
+		l.setMinWidth(bounds.getWidth()*0.2);
 		
 		if (Title.size() % 2 != 0) {
 			
