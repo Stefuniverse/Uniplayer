@@ -5,14 +5,6 @@
 import java.io.*;
 import java.net.MalformedURLException;
 
-
-
-
-
-
-
-
-
 //Basic Media-Player functionality
 import javax.swing.*;
 
@@ -41,146 +33,100 @@ import javafx.scene.paint.Color;
 
 public class medien extends Application {
 	
-	final int[] width = null;
-	final int[] height = null;
-	 List<MediaPlayer> MP = new ArrayList<MediaPlayer>();
-     List<Label> Title = new ArrayList<Label>();
+	static final String Layout_Main = ("-fx-background-color: #333333;"
+				+ "-fx-text-fill: white;"
+				+ "-fx-font-size: 15;");
+	
+	static final String Layout_active = ("-fx-text-fill: #7DA1EB;");
+	
+	static final String Layout_Action = ("-fx-text-fill : #FF6600");
+	
+	MediaView mediaview = new MediaView();
+	final BorderPane root = new BorderPane();
+    final HBox bb = new HBox();
+    final VBox list = new VBox();
+
+    final Button startpause = new Button();
+    final Button playatonce = new Button();
+    final Button prev = new Button();
+    final Button next = new Button();
+    final Button playlater = new Button();
+    
+    
+	int[] width = null;
+	int[] height = null;
+	String[] URL = null;
+    List<Label> Title = new ArrayList<Label>();
+    MediaPlayer MP;
     int current;
-    final MediaView mediaview = new MediaView();
 
 	public void start(final Stage pS)
     {
-		pS.setTitle("Uniplayer-Alpha");
-		
-        BorderPane root = new BorderPane();
         
-        final HBox bb = new HBox();
-        final VBox list = new VBox();
-        
-        
-        final Button startpause = new Button();
         startpause.setText("Pause");
+        playatonce.setText("Play at once");
+        prev.setText("Prev");
+        next.setText("Next");
+        playlater.setText("PLay later");
+        pS.setTitle("Uniplayer-Alpha");
+        
+        
         startpause.setOnAction(new EventHandler<ActionEvent>() {
- 
-            @Override
-            public void handle(ActionEvent event) {
-                if ("Pause".equals(startpause.getText()))
-                {
-                	if (!MP.isEmpty())
-                	{
-                		MP.get(current).pause();
-                		startpause.setText("Play");
-                	}
-                }
-                else
-                {
-                	if (!MP.isEmpty())
-                	{
-                		MP.get(current).play();
-                		startpause.setText("Pause");
-                	}
-                }
+        	@Override 
+        	public void handle(ActionEvent event) {
+        		
+                playpause();
+                
             }
         });
         
-        final Button playatonce = new Button();
-        playatonce.setText("Play at once");
         playatonce.setOnAction(new EventHandler<ActionEvent>() {
  
             @Override
             public void handle(ActionEvent event) {
             	
-            	String NewT[] = geturl();
+            	geturl(pS);
             	
-            	if (!MP.isEmpty())
-            	{
-            		MP.get(current).stop();
-            		Title.get(current).setStyle("-fx-text-fill: white;");
-            	}
-            	
-            	MP.add(Playerbuilder(NewT[0],pS));
-            	MP.get((MP.size()-1)).play();
-            	
-            	current = (MP.size()-1);
-            	
-            	Title.add(Labelbuilder(NewT[1],pS));
-            	list.getChildren().addAll(Title.get((Title.size()-1)));
- 
-            	//Didn't accept the rest of the style (kinda magic?)
-            	Title.get(current).setStyle("-fx-text-fill: #7DA1EB;"
-            								+ "-fx-background-color: #333333;"
-            								+ "-fx-font-size: 15;");
-            	
-            	
-            	updateview(pS);
+            	updateview(pS, Title.size()-1);
     
             	
             }
         });
         
-        final Button prev = new Button();
-        prev.setText("Prev");
         prev.setOnAction(new EventHandler<ActionEvent>() {
  
             @Override
             public void handle(ActionEvent event) {
             	
-            	if ((0 != current) && (!MP.isEmpty()))
-            	{
-            		MP.get(current).stop();
-            		Title.get(current).setStyle("-fx-text-fill: white;");
-                	current--;
-                	Title.get(current).setStyle("-fx-text-fill: #7DA1EB;");
-                	MP.get(current).play();
+            	if ((0 != current) && (!Title.isEmpty())) {
+            		
+            		updateview(pS,current--);
             	}
-            	
-            	
-            	updateview(pS);
-    
-            	
+       	
             }
         });
         
-        final Button next = new Button();
-        next.setText("Next");
         next.setOnAction(new EventHandler<ActionEvent>() {
  
             @Override
             public void handle(ActionEvent event) {
             	
-            	if (((MP.size()-1) != current) && (!MP.isEmpty()))
-            	{
-            		MP.get(current).stop();
-            		Title.get(current).setStyle("-fx-text-fill: white;");
-                	current++;
-                	Title.get(current).setStyle("-fx-text-fill: #7DA1EB;");
-                	MP.get(current).play();
+            	if (((Title.size()-1) != current) && (!Title.isEmpty())) {
+            		
+            		updateview(pS, current++);
+            		
             	}
-            	
-            	
-            	updateview(pS);
-    
             	
             }
         });
         
-        final Button playlater = new Button();
-        playlater.setText("PLay later");
         playlater.setOnAction(new EventHandler<ActionEvent>() {
  
             @Override
             public void handle(ActionEvent event) {
             	
-            	String NewT[] = geturl();
-            	
-            	MP.add(Playerbuilder(NewT[0],pS));
-            	
-            	Title.add(Labelbuilder(NewT[1],pS));
-            	list.getChildren().addAll(Title.get((Title.size()-1)));
-            	
-            	updateview(pS);
-    
-            	
+            	geturl(pS);
+    	
             }
         });
         
@@ -198,6 +144,8 @@ public class medien extends Application {
         pS.setY(bounds.getMinY());
         pS.setWidth(bounds.getWidth());
         pS.setHeight(bounds.getHeight());
+        mediaview.setFitWidth(bounds.getWidth()*0.7);
+		mediaview.setFitHeight(bounds.getHeight()*0.8);
 
         Scene scene = new Scene(root);
         scene.setFill(Color.BLACK);
@@ -207,10 +155,9 @@ public class medien extends Application {
 	}
 	
 	@SuppressWarnings("deprecation")
-	String[] geturl()
+	void geturl(Stage pS)
     {
     	File read;
-    	String URL[] = new String[2];
     	
     	JFileChooser fileChooser = new JFileChooser();
 
@@ -222,7 +169,7 @@ public class medien extends Application {
         // user clicked Cancel button on dialog
         if ( result == JFileChooser.CANCEL_OPTION )
         {
-        	return null;
+
         }
         else
         {
@@ -230,41 +177,36 @@ public class medien extends Application {
            try
            {
         	   //getdimensions(read.getPath());
-        	   URL[0] = read.toURL().toExternalForm().replace(" ", "%20");
-        	   URL[1] = read.getName();
+        	   URL[URL.length] = ( read.toURL().toExternalForm().replace(" ", "%20"));
+        	   Title.add(Labelbuilder(read.getName(),pS));
+               
+           		list.getChildren().addAll(Title.get((Title.size()-1)));
            }
            catch (MalformedURLException ex)
            {
         	   System.out.println("URL konnte nicht geholt werden");
-        	   return null;
+
            };
         }
-        return URL;
-        
+
     }
 	
 	Label Labelbuilder(String Input, final Stage s)
 	{
 		final Label l = new Label(Input);
-		l.setStyle("-fx-background-color: #333333;"
-				+ "-fx-text-fill: white;"
-				+ "-fx-font-size: 15");
+		l.setStyle(Layout_Main);
 		
 		l.setOnMouseClicked(new EventHandler<MouseEvent>() {
 		    @Override public void handle(MouseEvent e) {
-		        MP.get(current).stop();
-		        Title.get(current).setStyle("-fx-text-fill: white;");
-		        current = Title.indexOf(l);
-		        MP.get(current).play();
-		        Title.get(current).setStyle("-fx-text-fill: #7DA1EB;");
-		        updateview(s);
+		    	
+		        updateview(s, Title.indexOf(l));
 		            
 		    }
 		});
 		
 		l.setOnMouseEntered(new EventHandler<MouseEvent>() {
 		    @Override public void handle(MouseEvent e) {
-		        l.setStyle("-fx-text-fill : #FF6600");
+		        l.setStyle(Layout_Action);
 		            
 		    }
 		});
@@ -273,11 +215,11 @@ public class medien extends Application {
 		    @Override public void handle(MouseEvent e) {
 		    	if (Title.indexOf(l) != current)
 		    	{
-		    		l.setStyle("-fx-text-fill : white");
+		    		l.setStyle(Layout_Main);
 		    	}
 		    	else
 		    	{
-		    		Title.get(current).setStyle("-fx-text-fill: #7DA1EB;");
+		    		Title.get(current).setStyle(Layout_active);
 		    	}
 		            
 		    }
@@ -293,13 +235,10 @@ public class medien extends Application {
 		m.setOnEndOfMedia(new Runnable() {
 			@Override public void run() {
 				
-				Title.get(current).setStyle("-fx-text-fill: white;");
-				if (MP.indexOf(m) != MP.size()-1);
-				{
-					MP.get(MP.indexOf(m)+1).play();
-					current++;
-					Title.get(current).setStyle("-fx-text-fill: #7DA1EB;");
-					updateview(s);
+				Title.get(current).setStyle(Layout_Main);
+				if (Title.indexOf(m) != Title.size()-1) {
+					
+					updateview(s, current++);
 				}
 			}
 		});
@@ -307,17 +246,39 @@ public class medien extends Application {
 		return m;
 	}
 	
-	void updateview(Stage s)
+	void updateview(Stage s, int Newtoplay)
 	{
-		mediaview.setMediaPlayer(MP.get(current));
+		
+		MP = new MediaPlayer(new Media(URL[Newtoplay]));
+		MP.play();
+		Title.get(current).setStyle(Layout_Main);
+		current = Newtoplay;
+		Title.get(current).setStyle(Layout_active);
+		
+		mediaview.setMediaPlayer(MP);
+		
 		s.setTitle("Uniplayer-Alpha " + Title.get(current).getText());
 		
-		Screen screen = Screen.getPrimary();
-        Rectangle2D bounds = screen.getVisualBounds();
-        
-		mediaview.setFitWidth(bounds.getWidth()*0.7);
-		mediaview.setFitHeight(bounds.getHeight()*0.8);
+	}
+	
+	void playpause() {
 		
+		if ("Pause".equals(startpause.getText()))
+        {
+        	if (MP != null)
+        	{
+        		MP.pause();
+        		startpause.setText("Play");
+        	}
+        }
+        else
+        {
+        	if (MP != null)
+        	{
+        		MP.play();
+        		startpause.setText("Pause");
+        	}
+        }
 	}
 	
 
@@ -326,4 +287,7 @@ public class medien extends Application {
     {
     	launch();
     }
+
+
+	
 }
