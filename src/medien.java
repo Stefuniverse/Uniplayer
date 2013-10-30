@@ -24,10 +24,6 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.scene.media.MediaView;
 
-import com.xuggle.xuggler.IContainer;
-import com.xuggle.xuggler.IStream;
-import com.xuggle.xuggler.IStreamCoder;
-import com.xuggle.xuggler.ICodec;
 
 import java.util.*;
 
@@ -233,7 +229,7 @@ public class medien extends Application {
            read = fileChooser.getSelectedFile();
            try
            {
-        	   getdimensions(read.getPath());
+        	   //getdimensions(read.getPath());
         	   URL[0] = read.toURL().toExternalForm().replace(" ", "%20");
         	   URL[1] = read.getName();
            }
@@ -319,71 +315,12 @@ public class medien extends Application {
 		Screen screen = Screen.getPrimary();
         Rectangle2D bounds = screen.getVisualBounds();
         
-		mediaview.setScaleX((bounds.getWidth()/width[current])*0.7);
-		//bounds.getWidth()/(MP.get(current).getMedia().getWidth()*0.7)
+		mediaview.setFitWidth(bounds.getWidth()*0.7);
+		mediaview.setFitHeight(bounds.getHeight()*0.8);
 		
 	}
 	
 
-	void getdimensions(String Path)
-	{
-		// Create a Xuggler container object
-		
-		IContainer container = IContainer.make();
-
-		// Open up the container
-		if (container.open(Path, IContainer.Type.READ, null) < 0)
-		{
-			System.out.println("Pathfehler");
-			width[width.length] = 0;
-			height[height.length] = 0;
-			
-		}
-
-		// query how many streams the call to open found
-		int numStreams = container.getNumStreams();
-
-		// and iterate through the streams to find the first video stream
-		int videoStreamId = -1;
-		IStreamCoder videoCoder = null;
-		for (int i = 0; i < numStreams; i++) {
-		  // Find the stream object
-		  IStream stream = container.getStream(i);
-		  // Get the pre-configured decoder that can decode this stream;
-		  IStreamCoder coder = stream.getStreamCoder();
-
-		  if (coder.getCodecType() == ICodec.Type.CODEC_TYPE_VIDEO) {
-		    videoStreamId = i;
-		    videoCoder = coder;
-		    break;
-		  }
-		}
-		if (videoStreamId == -1)
-			if (container.open(Path, IContainer.Type.READ, null) < 0)
-			{
-				System.out.println("NoVideo");
-				width[width.length] = 0;
-				height[height.length] = 0;
-				
-			}
-
-		/*
-		 * Now we have found the video stream in this file. 
-		 * Let's open up our decoder so it can do work.
-		 */
-		if (videoCoder.open() < 0)
-			if (container.open(Path, IContainer.Type.READ, null) < 0)
-			{
-				System.out.println("DecoderError");
-				width[width.length] = 0;
-				height[height.length] = 0;
-				
-			}
-
-		// here you have what you need
-		height[height.length] = videoCoder.getHeight();
-		width[width.length] = videoCoder.getWidth();
-	}
 
 	public static void main(String args[])
     {
