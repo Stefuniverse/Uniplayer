@@ -58,7 +58,13 @@ public class medien extends Application {
 			+ "-fx-background-color: #666666;"
 			+ "-fx-font-size: 15;");
 	
-	static final String Layout_Playlist = ("-fx-background-color: #333333;");
+	static final String Layout_Playlist = ("-fx-background-color: #333333;"
+										+ "-fx-border-width: 2;"
+										+ "-fx-border-color: white;");
+	
+	static final String Layout_Panel = ("-fx-background-color: #333333;"
+									+ "-fx-border-width: 2;"
+									+ "-fx-border-color: white;");
 	
 	MediaView mediaview = new MediaView();
 	final BorderPane root = new BorderPane();
@@ -162,7 +168,11 @@ public class medien extends Application {
         pS.setY(bounds.getMinY());
         pS.setWidth(bounds.getWidth());
         pS.setHeight(bounds.getHeight());
-        list.setMinWidth(bounds.getWidth()*0.1);
+        bb.setMinWidth(bounds.getWidth());
+        bb.setMinHeight(bounds.getHeight()*0.1);
+        bb.setStyle(Layout_Panel);
+        list.setMinWidth(bounds.getWidth()*0.15);
+        list.setMinHeight(bounds.getHeight());
         list.setStyle(Layout_Playlist);
         mediaview.setFitWidth(bounds.getWidth()*0.8);
 		mediaview.setFitHeight(bounds.getHeight()*0.8);
@@ -222,7 +232,7 @@ public class medien extends Application {
 		Screen screen = Screen.getPrimary();
         Rectangle2D bounds = screen.getVisualBounds();
 		
-		l.setMinWidth(bounds.getWidth()*0.2);
+		l.setMinWidth(bounds.getWidth()*0.15);
 		
 		if (Title.size() % 2 != 0) {
 			
@@ -343,11 +353,8 @@ public class medien extends Application {
 		
 			Title.get(current).setStyle(Layout_active2);
 		}
-		
 		mediaview.setMediaPlayer(MP);
-		
-		s.setTitle("Uniplayer-Alpha " + Title.get(current).getText());
-		
+		s.setTitle("Uniplayer-Alpha " + Title.get(current).getText());	
 	}
 	
 	void playpause() {
@@ -370,11 +377,8 @@ public class medien extends Application {
         }
 	}
 	
-
-
 	public static void main(String args[])
     {
     	launch();
     }
-
 }
