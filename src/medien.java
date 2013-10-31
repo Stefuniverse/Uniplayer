@@ -28,9 +28,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.paint.Color;
 
-
-
-
 public class medien extends Application {
 	
 	static final String Layout_Main1 = ("-fx-background-color: #333333;"
@@ -112,7 +109,6 @@ public class medien extends Application {
             	
             	geturl(pS);
             	updateview(pS, Title.size()-1);
-    
             	
             }
         });
@@ -124,9 +120,8 @@ public class medien extends Application {
             	
             	if ((0 != current) && (!Title.isEmpty())) {
             		
-            		updateview(pS,current--);
+            		updateview(pS,(current-1));
             	}
-       	
             }
         });
         
@@ -137,7 +132,7 @@ public class medien extends Application {
             	
             	if (((Title.size()-1) != current) && (!Title.isEmpty())) {
             		
-            		updateview(pS, current++);
+            		updateview(pS, (current+1));
             		
             	}
             	
@@ -276,8 +271,7 @@ public class medien extends Application {
 		    	{
 		    		if (Title.indexOf(l) % 2 != 0) {
 		    			
-		    			l.setStyle(Layout_Main1);
-		    			
+		    			l.setStyle(Layout_Main1);		    			
 		    		}
 		    		
 		    		else {
@@ -333,7 +327,7 @@ public class medien extends Application {
 				
 				if (current != Title.size()-1) {
 					
-					updateview(s, current++);
+					updateview(s, (current+1));
 					
 					}
 				}
