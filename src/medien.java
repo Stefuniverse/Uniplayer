@@ -5,6 +5,7 @@
 import java.io.*;
 import java.net.MalformedURLException;
 
+
 //Basic Media-Player functionality
 import javax.swing.*;
 
@@ -17,6 +18,7 @@ import javafx.stage.Stage;
 import javafx.scene.media.MediaView;
 
 
+
 import java.util.*;
 
 //Buttons and layout
@@ -25,6 +27,7 @@ import javafx.scene.layout.*;
 import javafx.event.*;
 import javafx.scene.input.*;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.paint.Color;
 
@@ -32,28 +35,28 @@ public class medien extends Application {
 	
 	static final String Layout_Main1 = ("-fx-background-color: #333333;"
 				+ "-fx-text-fill: white;"
-				+ "-fx-font-size: 15;");
+				+ "-fx-font-size: 12;");
 	
 	static final String Layout_Main2 = ("-fx-background-color: #666666;"
 			+ "-fx-text-fill: white;"
-			+ "-fx-font-size: 15;");
+			+ "-fx-font-size: 12;");
 	
 	
 	static final String Layout_active1 = ("-fx-text-fill: #7DA1EB;"
 			+ "-fx-background-color: #333333;"
-			+ "-fx-font-size: 15;");
+			+ "-fx-font-size: 12;");
 	
 	static final String Layout_active2 = ("-fx-text-fill: #7DA1EB;"
 			+ "-fx-background-color: #666666;"
-			+ "-fx-font-size: 15;");
+			+ "-fx-font-size: 12;");
 	
 	static final String Layout_Action1 = ("-fx-text-fill: #FF6600;"
 			+ "-fx-background-color: #333333;"
-			+ "-fx-font-size: 15;");
+			+ "-fx-font-size: 12;");
 	
 	static final String Layout_Action2 = ("-fx-text-fill: #FF6600;"
 			+ "-fx-background-color: #666666;"
-			+ "-fx-font-size: 15;");
+			+ "-fx-font-size: 12;");
 	
 	static final String Layout_Playlist = ("-fx-background-color: #333333;"
 										+ "-fx-border-width: 2;"
@@ -62,6 +65,8 @@ public class medien extends Application {
 	static final String Layout_Panel = ("-fx-background-color: #333333;"
 									+ "-fx-border-width: 2;"
 									+ "-fx-border-color: white;");
+	
+	static final double Playlist_Width = 300.0;
 	
 	MediaView mediaview = new MediaView();
 	final BorderPane root = new BorderPane();
@@ -163,14 +168,18 @@ public class medien extends Application {
         pS.setY(bounds.getMinY());
         pS.setWidth(bounds.getWidth());
         pS.setHeight(bounds.getHeight());
-        bb.setMinWidth(bounds.getWidth());
-        bb.setMinHeight(bounds.getHeight()*0.1);
-        bb.setStyle(Layout_Panel);
-        list.setMinWidth(bounds.getWidth()*0.15);
-        list.setMinHeight(bounds.getHeight());
+       
+        
+        list.setMinWidth(Playlist_Width);
+        list.setMinHeight(pS.getHeight()*0.8);
         list.setStyle(Layout_Playlist);
-        mediaview.setFitWidth(bounds.getWidth()*0.8);
-		mediaview.setFitHeight(bounds.getHeight()*0.8);
+        
+        bb.setMinWidth(pS.getWidth());
+        bb.setMaxHeight(pS.getHeight()*0.2);
+        bb.setStyle(Layout_Panel);
+        bb.setAlignment(Pos.BOTTOM_CENTER);
+        mediaview.setFitWidth(pS.getWidth() - Playlist_Width);
+		mediaview.setFitHeight(pS.getHeight()*0.8);
 
         Scene scene = new Scene(root);
         scene.setFill(Color.BLACK);
