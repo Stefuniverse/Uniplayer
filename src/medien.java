@@ -71,14 +71,16 @@ public class medien extends Application {
 	MediaView mediaview = new MediaView();
 	final BorderPane root = new BorderPane();
     final HBox bb = new HBox();
+    final HBox pb = new HBox();
     final VBox list = new VBox();
+    final VBox Menu = new VBox();
 
     final Button startpause = new Button();
     final Button playatonce = new Button();
     final Button prev = new Button();
     final Button next = new Button();
     final Button playlater = new Button();
-    
+    Slider Songp = new Slider();
     
 	int[] width = null;
 	int[] height = null;
@@ -86,7 +88,9 @@ public class medien extends Application {
     List<Label> Title = new ArrayList<Label>();
     MediaPlayer MP;
     int current = 0;
+    final Songprogress Mip = new Songprogress();
 
+	@Override
 	public void start(final Stage pS)
     {
         
@@ -96,6 +100,8 @@ public class medien extends Application {
         next.setText("Next");
         playlater.setText("PLay later");
         pS.setTitle("Uniplayer-Alpha");
+        Songp = Mip.getslider();
+        Mip.start();
         
 					
         startpause.setOnAction(new EventHandler<ActionEvent>() {
@@ -156,9 +162,15 @@ public class medien extends Application {
         
         //Layout
         bb.getChildren().addAll(startpause, playatonce, playlater, prev, next);
+        pb.getChildren().addAll(Songp);
+        Menu.getChildren().addAll(pb, bb);
         bb.setPadding(new Insets(15, 12, 15, 12));
-        list.setPadding(new Insets(20, 9, 0, 0));
-        root.setBottom(bb);
+        pb.setPadding(new Insets(15, 30, 15, 30));
+        bb.setAlignment(Pos.CENTER);
+        pb.setAlignment(Pos.CENTER);
+       
+        list.setPadding(new Insets(20, 0, 0, 5));
+        root.setBottom(Menu);
         root.setRight(list);
         root.setCenter(mediaview);
         Screen screen = Screen.getPrimary();
@@ -169,15 +181,15 @@ public class medien extends Application {
         pS.setWidth(bounds.getWidth());
         pS.setHeight(bounds.getHeight());
        
-        
+        Songp.setMinWidth(pS.getWidth()-80);
         list.setMinWidth(Playlist_Width);
         list.setMinHeight(pS.getHeight()*0.8);
         list.setStyle(Layout_Playlist);
         
-        bb.setMinWidth(pS.getWidth());
-        bb.setMaxHeight(pS.getHeight()*0.2);
-        bb.setStyle(Layout_Panel);
-        bb.setAlignment(Pos.BOTTOM_CENTER);
+        Menu.setMinWidth(pS.getWidth());
+        Menu.setMaxHeight(pS.getHeight()*0.2);
+        Menu.setStyle(Layout_Panel);
+        Menu.setAlignment(Pos.BOTTOM_CENTER);
         mediaview.setFitWidth(pS.getWidth() - Playlist_Width);
 		mediaview.setFitHeight(pS.getHeight()*0.8);
 
@@ -309,25 +321,18 @@ public class medien extends Application {
 	}
 	
 	
-	void updateview(final Stage s, int Newtoplay)
-	{
+	void updateview(final Stage s, int Newtoplay) {
+		
 		if (MP != null) {
 			
 			MP.stop();
 		
 			if ((current % 2) != 0) {
-			
 				Title.get(current).setStyle(Layout_Main1);
-			
-			}
-		
-			else {
-			
+			} else {
 				Title.get(current).setStyle(Layout_Main2);
 			}
 		}
-		
-		
 		
 		MP = new MediaPlayer(new Media(URL.get(Newtoplay)));
 		
@@ -337,41 +342,40 @@ public class medien extends Application {
 				if (current != Title.size()-1) {
 					
 					updateview(s, (current+1));
-					
 					}
 				}
 			});
         
-		MP.play();
+        MP.setOnReady(new Runnable() {
+        	@Override public void run() {
+        		Mip.setparam(MP);
+        		MP.play();
+        	}
+        });
+        
 		
 		current = Newtoplay;
 		
 		if ((current % 2) != 0) {
 			
 			Title.get(current).setStyle(Layout_active1);
-		
-		}
-	
-		else {
-		
+		} else {
+			
 			Title.get(current).setStyle(Layout_active2);
 		}
 		mediaview.setMediaPlayer(MP);
-		s.setTitle("Uniplayer-Alpha " + Title.get(current).getText());	
+		s.setTitle("Uniplayer-Alpha " + Title.get(current).getText());
 	}
 	
 	void playpause() {
 		
-		if ("Pause".equals(startpause.getText()))
-        {
-        	if (MP != null)
-        	{
+		if ("Pause".equals(startpause.getText())) {
+        	if (MP != null) {
         		MP.pause();
         		startpause.setText("Play");
         	}
         }
-        else
-        {
+        else {
         	if (MP != null)
         	{
         		MP.play();
@@ -380,8 +384,7 @@ public class medien extends Application {
         }
 	}
 	
-	public static void main(String args[])
-    {
+	public static void main(String args[]) {
     	launch();
     }
 }
