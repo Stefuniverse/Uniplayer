@@ -2,8 +2,8 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Slider;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaPlayer.Status;
 import javafx.util.Duration;
-
 
 public class Songprogress extends Thread {
 	
@@ -13,25 +13,43 @@ public class Songprogress extends Thread {
 	public Songprogress() {
 		
 		this.slide = new Slider();
-		
-            
+		slide.setValueChanging(true);
+		slide.valueProperty().addListener(new ChangeListener<Number>() {
+            public void changed(ObservableValue<? extends Number> ov,
+                Number old_val, Number new_val) {
+            	if ((old_val.doubleValue() - new_val.doubleValue()) <= -1) {
+                check.seek(new Duration(new_val.doubleValue()*1000));
+            	}
+            }
+		});
 	}
 	
 	@Override
 	public void run() {
 		
-		slide.setValue(this.check.getCurrentTime().toSeconds());
-		try {
-			sleep(400);
-		}
-		catch(InterruptedException ex) {
+		while (true) {
 			
+			try {
+				sleep(100);
+			}
+			catch(InterruptedException ex) {
+		
+			}
+			
+			if (check != null) {
+		
+				while (check.getStatus() == Status.PLAYING) {
+			
+					slide.setValue(this.check.getCurrentTime().toSeconds());
+			
+					try {
+						sleep(100);
+					}
+					catch(InterruptedException ex) {
+					}
+				}
+			}
 		}
-	}
-	
-	public void test(MediaPlayer MP) {
-		check = MP;
-		System.out.println(check.getMedia().getDuration().toMillis());
 	}
 	
 	public void setparam(MediaPlayer MP) {

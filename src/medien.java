@@ -90,6 +90,7 @@ public class medien extends Application {
     int current = 0;
     final Songprogress Mip = new Songprogress();
 
+	@Override
 	public void start(final Stage pS)
     {
         
@@ -100,6 +101,7 @@ public class medien extends Application {
         playlater.setText("PLay later");
         pS.setTitle("Uniplayer-Alpha");
         Songp = Mip.getslider();
+        Mip.start();
         
 					
         startpause.setOnAction(new EventHandler<ActionEvent>() {
@@ -319,8 +321,8 @@ public class medien extends Application {
 	}
 	
 	
-	void updateview(final Stage s, int Newtoplay)
-	{
+	void updateview(final Stage s, int Newtoplay) {
+		
 		if (MP != null) {
 			
 			MP.stop();
@@ -344,8 +346,13 @@ public class medien extends Application {
 				}
 			});
         
-		MP.play();
-		Mip.test(MP);
+        MP.setOnReady(new Runnable() {
+        	@Override public void run() {
+        		Mip.setparam(MP);
+        		MP.play();
+        	}
+        });
+        
 		
 		current = Newtoplay;
 		
