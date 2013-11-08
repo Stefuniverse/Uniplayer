@@ -2,12 +2,6 @@
 
 //Imports File
 
-import java.io.*;
-import java.net.MalformedURLException;
-
-
-//Basic Media-Player functionality
-import javax.swing.*;
 
 import javafx.scene.media.MediaPlayer;
 import javafx.application.Application;
@@ -84,16 +78,12 @@ public class medien extends Application {
     
 	int[] width = null;
 	int[] height = null;
-	List<String> URL = new LinkedList<String>();
-    List<Label> Title = new ArrayList<Label>();
     MediaPlayer MP;
-    int current = 0;
-    final Songprogress Mip = new Songprogress();
 
 	@Override
 	public void start(final Stage pS)
     {
-        
+		final Mediabinder bind = new Mediabinder(pS);
         startpause.setText("Pause");
         playatonce.setText("Play at once");
         prev.setText("Prev");
@@ -118,7 +108,7 @@ public class medien extends Application {
             @Override
             public void handle(ActionEvent event) {
             	
-            	geturl(pS);
+            	bind.start();
             	updateview(pS, Title.size()-1);
             	
             }
@@ -129,9 +119,9 @@ public class medien extends Application {
             @Override
             public void handle(ActionEvent event) {
             	
-            	if ((0 != current) && (!Title.isEmpty())) {
+            	if ((0 != bind.getcurrent()) && (!Title.isEmpty())) {
             		
-            		updateview(pS,(current-1));
+            		bind.updateview (pS,(bind.getcurrent())-1);
             	}
             }
         });
@@ -141,9 +131,9 @@ public class medien extends Application {
             @Override
             public void handle(ActionEvent event) {
             	
-            	if (((Title.size()-1) != current) && (!Title.isEmpty())) {
+            	if (((Title.size()-1) != bind.getcurrent()) && (!Title.isEmpty())) {
             		
-            		updateview(pS, (current+1));
+            		bind.updateview(pS, (bind.getcurrent()+1));
             		
             	}
             	
@@ -155,7 +145,7 @@ public class medien extends Application {
             @Override
             public void handle(ActionEvent event) {
             	
-            	geturl(pS);
+            	bind.start();
     	
             }
         });
@@ -200,173 +190,6 @@ public class medien extends Application {
 	        	
 	}
 	
-	@SuppressWarnings("deprecation")
-	void geturl(Stage pS)
-    {
-    	File read;
-    	
-    	JFileChooser fileChooser = new JFileChooser();
-
-        fileChooser.setFileSelectionMode(
-           JFileChooser.FILES_ONLY );
-        int result = fileChooser.showOpenDialog( fileChooser);
-        
-
-        // user clicked Cancel button on dialog
-        if ( result == JFileChooser.CANCEL_OPTION )
-        {
-
-        }
-        else
-        {
-           read = fileChooser.getSelectedFile();
-           try
-           {
-        	   //getdimensions(read.getPath());
-        	   
-        		   
-        	URL.add(read.toURL().toExternalForm().replace(" ", "%20"));
-        	   
-
-        	   Title.add(Labelbuilder(read.getName(),pS));
-               
-           		list.getChildren().addAll(Title.get((Title.size()-1)));
-           }
-           catch (MalformedURLException ex)
-           {
-        	   System.out.println("URL konnte nicht geholt werden");
-
-           };
-        }
-
-    }
-	
-	Label Labelbuilder(String Input, final Stage s)
-	{
-		final Label l = new Label(Input);
-		
-		Screen screen = Screen.getPrimary();
-        Rectangle2D bounds = screen.getVisualBounds();
-		
-		l.setMinWidth(bounds.getWidth()*0.15);
-		
-		if (Title.size() % 2 != 0) {
-			
-			l.setStyle(Layout_Main1);
-			
-		}
-		
-		else {
-			
-			l.setStyle(Layout_Main2);
-			
-		}
-		
-		
-		l.setOnMouseClicked(new EventHandler<MouseEvent>() {
-		    @Override public void handle(MouseEvent e) {
-		    	
-		        updateview(s, Title.indexOf(l));
-		            
-		    }
-		});
-		
-		l.setOnMouseEntered(new EventHandler<MouseEvent>() {
-		    @Override public void handle(MouseEvent e) {
-		    	
-		    	if (Title.indexOf(l) % 2 != 0) {
-		        
-		    		l.setStyle(Layout_Action1);
-		    	
-		    	}
-		    	else {
-		    		l.setStyle(Layout_Action2);
-		    	}
-		            
-		    }
-		});
-		
-		l.setOnMouseExited(new EventHandler<MouseEvent>() {
-		    @Override public void handle(MouseEvent e) {
-		    	if (Title.indexOf(l) != current)
-		    	{
-		    		if (Title.indexOf(l) % 2 != 0) {
-		    			
-		    			l.setStyle(Layout_Main1);		    			
-		    		}
-		    		
-		    		else {
-		    			
-		    			l.setStyle(Layout_Main2);
-		    		}
-		    	}
-		    	
-		    	else
-		    		
-		    	{
-		    		if (Title.indexOf(l) % 2 != 0) {
-				        
-				    	l.setStyle(Layout_active1);
-				    	
-				    	}
-				    else {
-				    	l.setStyle(Layout_active2);
-				    	}
-		    	}
-		            
-		    }
-		});
-		
-		return l;
-	}
-	
-	
-	void updateview(final Stage s, int Newtoplay) {
-		
-		if (MP != null) {
-			
-			MP.stop();
-		
-			if ((current % 2) != 0) {
-				Title.get(current).setStyle(Layout_Main1);
-			} else {
-				Title.get(current).setStyle(Layout_Main2);
-			}
-		}
-		
-		MP = new MediaPlayer(new Media(URL.get(Newtoplay)));
-		
-        MP.setOnEndOfMedia(new Runnable() {
-			@Override public void run() {
-				
-				if (current != Title.size()-1) {
-					
-					updateview(s, (current+1));
-					}
-				}
-			});
-        
-        MP.setOnReady(new Runnable() {
-        	@Override public void run() {
-        		Mip.setparam(MP);
-        		MP.play();
-        	}
-        });
-        
-		
-		current = Newtoplay;
-		
-		if ((current % 2) != 0) {
-			
-			Title.get(current).setStyle(Layout_active1);
-		} else {
-			
-			Title.get(current).setStyle(Layout_active2);
-		}
-		mediaview.setMediaPlayer(MP);
-		s.setTitle("Uniplayer-Alpha " + Title.get(current).getText());
-	}
-	
 	void playpause() {
 		
 		if ("Pause".equals(startpause.getText())) {
@@ -383,6 +206,11 @@ public class medien extends Application {
         	}
         }
 	}
+	
+	MediaPlayer getplayer() {
+		return MP;
+	}
+	
 	
 	public static void main(String args[]) {
     	launch();
