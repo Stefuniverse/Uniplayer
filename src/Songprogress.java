@@ -17,7 +17,7 @@ public class Songprogress extends Thread {
 		slide.valueProperty().addListener(new ChangeListener<Number>() {
             public void changed(ObservableValue<? extends Number> ov,
                 Number old_val, Number new_val) {
-            	if ((old_val.doubleValue() - new_val.doubleValue()) <= -1) {
+            	if (((old_val.doubleValue() - new_val.doubleValue()) <= -1) || ((new_val.doubleValue() - old_val.doubleValue()) <= -1)) {
                 check.seek(new Duration(new_val.doubleValue()*1000));
             	}
             }
