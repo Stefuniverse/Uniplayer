@@ -7,14 +7,15 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaPlayer.Status;
 import javafx.scene.media.MediaView;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-
-
 
 public class Mediafunctions extends Thread {
 	
@@ -189,19 +190,19 @@ Label Labelbuilder(String Input, final Stage s)
 	mediaview.setMediaPlayer(MP);
 	s.setTitle("Uniplayer-Alpha " + Title.get(current).getText());
 }
-void playpause(Button startpause) {
+void playpause(Button startpause, Image play, Image pause) {
 		
-		if ("Pause".equals(startpause.getText())) {
+		if ((MP != null) && (MP.getStatus() == Status.PLAYING)) {
         	if (MP != null) {
         		MP.pause();
-        		startpause.setText("Play");
+        		startpause.setGraphic(new ImageView(play));
         	}
         }
         else {
         	if (MP != null)
         	{
         		MP.play();
-        		startpause.setText("Pause");
+        		startpause.setGraphic(new ImageView(pause));
         	}
         }
 	}

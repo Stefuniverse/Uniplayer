@@ -1,23 +1,27 @@
 
-import javafx.scene.media.MediaPlayer;
-import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.stage.Screen;
-import javafx.stage.Stage;
-
 import java.io.File;
 import java.net.MalformedURLException;
 
-import javax.swing.JFileChooser;
-
-//Buttons and layout
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.event.*;
+import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Scene;
+//Buttons and layout
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
+import javafx.stage.Screen;
+import javafx.stage.Stage;
+
+import javax.swing.JFileChooser;
 
 public class medien extends Application {
 	
@@ -31,6 +35,15 @@ public class medien extends Application {
 	
 	static final double Playlist_Width = 300.0;
 	
+	static final String Layout_Button = ("-fx-background-color: null;");
+	
+	
+	final Image pause = new Image(getClass().getResourceAsStream("ressources/Pause.png"));
+	final Image play = new Image(getClass().getResourceAsStream("ressources/Play.png"));
+	final Image Next = new Image(getClass().getResourceAsStream("ressources/Next.png"));
+	final Image Prev = new Image(getClass().getResourceAsStream("ressources/Prev.png"));
+	final Image beginning = new Image(getClass().getResourceAsStream("ressources/beginning.png"));
+	final Image sound = new Image(getClass().getResourceAsStream("ressources/sound.png"));
 	
 	final BorderPane root = new BorderPane();
     final HBox bb = new HBox();
@@ -53,10 +66,16 @@ public class medien extends Application {
 	@Override
 	public void start(final Stage pS)
     {
-        startpause.setText("Pause");
+        startpause.setGraphic(new ImageView(pause));
+        prev.setGraphic(new ImageView(Prev));
+        next.setGraphic(new ImageView(Next));
+        
+        startpause.setStyle(Layout_Button);
+        next.setStyle(Layout_Button);
+        prev.setStyle(Layout_Button);
+        
+        
         playatonce.setText("Play at once");
-        prev.setText("Prev");
-        next.setText("Next");
         playlater.setText("PLay later");
         pS.setTitle("Uniplayer-Alpha");
         
@@ -65,7 +84,7 @@ public class medien extends Application {
         	@Override 
         	public void handle(ActionEvent event) {
         		
-                bind.playpause(startpause);
+                bind.playpause(startpause, play, pause);
                 
             }
         });
@@ -118,7 +137,7 @@ public class medien extends Application {
         });
         
         //Layout
-        bb.getChildren().addAll(startpause, playatonce, playlater, prev, next);
+        bb.getChildren().addAll( playatonce, playlater, prev, startpause, next);
         pb.getChildren().addAll(bind.getprog());
         Menu.getChildren().addAll(pb, bb);
         bb.setPadding(new Insets(15, 12, 15, 12));
