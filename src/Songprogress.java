@@ -36,7 +36,6 @@ public class Songprogress extends Thread {
 			catch(InterruptedException ex) {
 		
 			}
-			
 			if (check != null) {
 		
 				while (check.getStatus() == Status.PLAYING) {

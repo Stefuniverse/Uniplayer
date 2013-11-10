@@ -3,14 +3,21 @@ import java.io.File;
 import java.net.MalformedURLException;
 
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
+import javafx.scene.control.Menu;
 //Buttons and layout
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -23,7 +30,7 @@ import javafx.stage.Stage;
 
 import javax.swing.JFileChooser;
 
-public class medien extends Application {
+public class Layout extends Application {
 	
 	static final String Layout_Playlist = ("-fx-background-color: #333333;"
 										+ "-fx-border-width: 2;"
@@ -46,22 +53,32 @@ public class medien extends Application {
 	final Image sound = new Image(getClass().getResourceAsStream("ressources/sound.png"));
 	
 	final BorderPane root = new BorderPane();
+	final BorderPane UIe = new BorderPane();
+	final HBox volumec = new HBox();
+	final HBox progc = new HBox();
     final HBox bb = new HBox();
     final HBox pb = new HBox();
-    final VBox Menu = new VBox();
+    final VBox menu = new VBox();
     final VBox list = new VBox();
 
     final Button startpause = new Button();
-    final Button playatonce = new Button();
     final Button prev = new Button();
     final Button next = new Button();
-    final Button playlater = new Button();
+    final Button restart = new Button();
+    final Slider Volume = new Slider();
+    final Label Vimage = new Label();
+    
+    final MenuBar menubar = new MenuBar();
+    final Menu menuFile = new Menu("Datei");
+    final MenuItem playatonce = new MenuItem("Play at once");
+    final MenuItem playlater = new MenuItem("Play later");
+    final MenuItem Settings = new MenuItem("Settings");
     
 	int[] width = null;
 	int[] height = null;
     MediaPlayer MP;
-    final Mediafunctions bind = new Mediafunctions();
     int current = 0;
+    final static Songprogress Mip = new Songprogress();
 
 	@Override
 	public void start(final Stage pS)
@@ -69,22 +86,37 @@ public class medien extends Application {
         startpause.setGraphic(new ImageView(pause));
         prev.setGraphic(new ImageView(Prev));
         next.setGraphic(new ImageView(Next));
+        restart.setGraphic(new ImageView(beginning));
         
         startpause.setStyle(Layout_Button);
         next.setStyle(Layout_Button);
         prev.setStyle(Layout_Button);
+        restart.setStyle(Layout_Button);
         
+        Mip.start();
         
-        playatonce.setText("Play at once");
-        playlater.setText("PLay later");
+        Vimage.setGraphic(new ImageView(sound));
         pS.setTitle("Uniplayer-Alpha");
+        Volume.setMax(1);
+        Volume.setMin(0);
+        Volume.setValue(1);
         
-					
+        
+		restart.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				
+				if (!Mediafunctions.getnames().isEmpty()) {
+					Mediafunctions.updateview(pS, Mediafunctions.getcurrent(), Mip);
+				}
+			}
+		});
+		
         startpause.setOnAction(new EventHandler<ActionEvent>() {
         	@Override 
         	public void handle(ActionEvent event) {
         		
-                bind.playpause(startpause, play, pause);
+        		Mediafunctions.playpause(startpause, play, pause);
                 
             }
         });
@@ -95,7 +127,7 @@ public class medien extends Application {
             public void handle(ActionEvent event) {
             	
             	choosefile(pS);
-            	bind.updateview(pS, bind.getnames().size()-1);
+            	Mediafunctions.updateview(pS, Mediafunctions.getnames().size()-1, Mip);
             	
             }
         });
@@ -105,9 +137,9 @@ public class medien extends Application {
             @Override
             public void handle(ActionEvent event) {
             	
-            	if ((0 != bind.getcurrent()) && (!bind.getnames().isEmpty())) {
+            	if ((0 != Mediafunctions.getcurrent()) && (!Mediafunctions.getnames().isEmpty())) {
             		
-            		bind.updateview (pS,(bind.getcurrent())-1);
+            		Mediafunctions.updateview (pS,(Mediafunctions.getcurrent())-1, Mip);
             	}
             }
         });
@@ -117,9 +149,9 @@ public class medien extends Application {
             @Override
             public void handle(ActionEvent event) {
             	
-            	if (((bind.getnames().size()-1) != bind.getcurrent()) && (!bind.getnames().isEmpty())) {
+            	if (((Mediafunctions.getnames().size()-1) != Mediafunctions.getcurrent()) && (!Mediafunctions.getnames().isEmpty())) {
             		
-            		bind.updateview(pS, (bind.getcurrent()+1));
+            		Mediafunctions.updateview(pS, (Mediafunctions.getcurrent()+1), Mip);
             		
             	}
             	
@@ -136,19 +168,45 @@ public class medien extends Application {
             }
         });
         
+        Volume.valueProperty().addListener(new ChangeListener<Number>() {
+            @Override
+			public void changed(ObservableValue<? extends Number> ov,
+                Number old_val, Number new_val) {
+            	Mediafunctions.setV(new_val.doubleValue());
+            }
+		});
+        
         //Layout
-        bb.getChildren().addAll( playatonce, playlater, prev, startpause, next);
-        pb.getChildren().addAll(bind.getprog());
-        Menu.getChildren().addAll(pb, bb);
+        menuFile.getItems().addAll(playatonce,playlater,Settings);
+        menubar.getMenus().addAll(menuFile);
+        restart.setScaleX(0.5);
+        restart.setScaleY(0.5);
+        prev.setScaleX(0.5);
+        prev.setScaleY(0.5);
+        next.setScaleX(0.5);
+        next.setScaleY(0.5);
+        startpause.setScaleX(0.5);
+        startpause.setScaleY(0.5);
+        
+        bb.getChildren().addAll(prev, restart, startpause, next);
+        volumec.getChildren().addAll(Vimage,Volume);
+        pb.getChildren().addAll(Mip.getslider());
+        menu.getChildren().addAll(pb, UIe);
+        UIe.setCenter(bb);
+        UIe.setRight(volumec);
         bb.setPadding(new Insets(15, 12, 15, 12));
         pb.setPadding(new Insets(15, 30, 15, 30));
+        volumec.setPadding(new Insets(0, 30, 0, 0));
+        volumec.setAlignment(Pos.CENTER);
+        
         bb.setAlignment(Pos.CENTER);
         pb.setAlignment(Pos.CENTER);
        
         list.setPadding(new Insets(20, 0, 0, 5));
-        root.setBottom(Menu);
+        root.setBottom(menu);
         root.setRight(list);
-        root.setCenter(bind.getmediaview());
+        root.setCenter(Mediafunctions.getmediaview());
+        root.setTop(menubar);
         Screen screen = Screen.getPrimary();
         Rectangle2D bounds = screen.getVisualBounds();
 
@@ -157,17 +215,17 @@ public class medien extends Application {
         pS.setWidth(bounds.getWidth());
         pS.setHeight(bounds.getHeight());
        
-        bind.getprog().setMinWidth(pS.getWidth()-80);
+        Mip.getslider().setMinWidth(pS.getWidth()-80);
         list.setMinWidth(Playlist_Width);
         list.setMinHeight(pS.getHeight()*0.8);
         list.setStyle(Layout_Playlist);
         
-        Menu.setMinWidth(pS.getWidth());
-        Menu.setMaxHeight(pS.getHeight()*0.2);
-        Menu.setStyle(Layout_Panel);
-        Menu.setAlignment(Pos.BOTTOM_CENTER);
-        bind.getmediaview().setFitWidth(pS.getWidth() - Playlist_Width);
-        bind.getmediaview().setFitHeight(pS.getHeight()*0.8);
+        menu.setMinWidth(pS.getWidth());
+        menu.setMaxHeight(pS.getHeight()*0.2);
+        menu.setStyle(Layout_Panel);
+        menu.setAlignment(Pos.BOTTOM_CENTER);
+        Mediafunctions.getmediaview().setFitWidth(pS.getWidth() - Playlist_Width);
+        Mediafunctions.getmediaview().setFitHeight(pS.getHeight()*0.8);
 
         Scene scene = new Scene(root);
         scene.setFill(Color.BLACK);
@@ -181,10 +239,9 @@ public class medien extends Application {
 		File read;
 		JFileChooser fileChooser = new JFileChooser();
 		
-					fileChooser.setFileSelectionMode(
-		           JFileChooser.FILES_ONLY );
+				fileChooser.setFileSelectionMode(
+		        JFileChooser.FILES_ONLY );
 		        int result = fileChooser.showOpenDialog( fileChooser);
-		        
 
 		        // user clicked Cancel button on dialog
 		        if ( result == JFileChooser.CANCEL_OPTION )
@@ -197,22 +254,20 @@ public class medien extends Application {
 		           try
 		           {   
 		        		   
-		        	bind.getURL().add(read.toURL().toExternalForm().replace(" ", "%20"));
+		        	   Mediafunctions.getURL().add(read.toURL().toExternalForm().replace(" ", "%20"));
 		        	   
 
-		        	   bind.getnames().add(bind.Labelbuilder(read.getName(),pS));
+		        	   Mediafunctions.getnames().add(Mediafunctions.Labelbuilder(read.getName(),pS, Mip));
 		               
-		           		list.getChildren().addAll(bind.getnames().get((bind.getnames().size()-1)));
+		           		list.getChildren().addAll(Mediafunctions.getnames().get((Mediafunctions.getnames().size()-1)));
 		           }
 		           catch (MalformedURLException ex)
 		           {
-		        	   System.out.println("URL konnte nicht geholt werden");
+		        	   ex.printStackTrace();
 
 		           };
 		       }	
 			}
-	
-	
 	
 	public static void main(String args[]) {
     	launch();
