@@ -40,7 +40,7 @@ public class Layout extends Application {
 									+ "-fx-border-width: 2;"
 									+ "-fx-border-color: white;");
 	
-	static final double Playlist_Width = 200.0;
+	static final double Playlist_Width = 300.0;
 	
 	static final String Layout_Button = ("-fx-background-color: null;");
 	
@@ -258,7 +258,7 @@ public class Layout extends Application {
 		        	   Mediafunctions.getURL().add(read.toURL().toExternalForm().replace(" ", "%20"));
 		        	   
 
-		        	   Mediafunctions.getnames().add(Mediafunctions.Labelbuilder(read.getName(),pS, Mip));
+		        	   Mediafunctions.getnames().add(new Playlist_Entry(read.getName(),pS, Mip));
 		               
 		           		list.getChildren().addAll(Mediafunctions.getnames().get((Mediafunctions.getnames().size()-1)));
 		           }

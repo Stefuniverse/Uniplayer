@@ -40,7 +40,7 @@ public class Songprogress extends Thread {
 		
 				while (check.getStatus() == Status.PLAYING) {
 			
-					slide.setValue(this.check.getCurrentTime().toSeconds());
+					slide.setValue(check.getCurrentTime().toSeconds());
 			
 					try {
 						sleep(100);
@@ -54,8 +54,8 @@ public class Songprogress extends Thread {
 	
 	public void setparam(MediaPlayer MP) {
 		check = MP;
-		this.slide.setMax(check.getTotalDuration().toSeconds());
-		this.slide.setMin(0);
+		slide.setMax(check.getTotalDuration().toSeconds());
+		slide.setMin(0);
 	}
 	
 	public Slider getslider() {

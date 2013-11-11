@@ -1,13 +1,9 @@
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-
-import javafx.event.EventHandler;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaPlayer.Status;
@@ -50,73 +46,11 @@ public class Mediafunctions {
 								+ "-fx-border-color: white;");
 	
 	static List<String> URL = new LinkedList<String>();
-    static List<Label> Title = new ArrayList<Label>();
+    static List<Playlist_Entry> Title = new ArrayList<Playlist_Entry>();
     static int current = 0;
     static MediaPlayer MP;
     
     static MediaView mediaview = new MediaView();
-
-	static Label Labelbuilder(String Input, final Stage s, final Songprogress Mip)
-	{
-		final Label l = new Label(Input);
-	
-		l.setMinWidth(s.getWidth()*0.15);
-	
-		if (Title.size() % 2 != 0) {
-			l.setStyle(Layout_Main1);	
-		}
-	
-		else {	
-			l.setStyle(Layout_Main2);	
-		}
-	
-	
-		l.setOnMouseClicked(new EventHandler<MouseEvent>() {
-			@Override public void handle(MouseEvent e) {
-	    	
-				updateview(s, Title.indexOf(l), Mip);        
-			}
-		});
-	
-		l.setOnMouseEntered(new EventHandler<MouseEvent>() {
-			@Override public void handle(MouseEvent e) {
-	    	
-				if (Title.indexOf(l) % 2 != 0) {
-	        
-					l.setStyle(Layout_Action1);
-	    	
-				}
-				else {
-					l.setStyle(Layout_Action2);
-				}
-	            
-			}
-		});
-	
-		l.setOnMouseExited(new EventHandler<MouseEvent>() {
-			@Override public void handle(MouseEvent e) {
-				if (Title.indexOf(l) != current)
-				{
-					if (Title.indexOf(l) % 2 != 0) {
-	    			
-						l.setStyle(Layout_Main1);		    			
-					} else {
-	    			
-	    			l.setStyle(Layout_Main2);
-					}
-				} else {
-					
-					if (Title.indexOf(l) % 2 != 0) {
-			    	l.setStyle(Layout_active1);	
-					}
-					else {
-						l.setStyle(Layout_active2);
-					}
-				}        
-			}
-		});
-		return l;
-		}
 
 	static void updateview(final Stage s, int Newtoplay, final Songprogress Mip) {
 	
@@ -125,9 +59,9 @@ public class Mediafunctions {
 				MP.stop();
 	
 				if ((current % 2) != 0) {
-					Title.get(current).setStyle(Layout_Main1);
+					Title.get(current).setLStyle(Layout_Main1);
 				} else {
-					Title.get(current).setStyle(Layout_Main2);
+					Title.get(current).setLStyle(Layout_Main2);
 				}
 			}
 	
@@ -153,10 +87,10 @@ public class Mediafunctions {
 	
 			if ((current % 2) != 0) {
 		
-				Title.get(current).setStyle(Layout_active1);
+				Title.get(current).setLStyle(Layout_active1);
 			} else {
 		
-				Title.get(current).setStyle(Layout_active2);
+				Title.get(current).setLStyle(Layout_active2);
 			}
 			mediaview.setMediaPlayer(MP);
 			s.setTitle("Uniplayer-Alpha " + Title.get(current).getText());
@@ -186,7 +120,7 @@ public class Mediafunctions {
 				return current;
 			}
 	
-	static public List<Label> getnames() {
+	static public List<Playlist_Entry> getnames() {
 				return Title; 
 			}
 	
