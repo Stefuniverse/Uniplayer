@@ -101,6 +101,12 @@ public class Layout extends Application {
         Volume.setMin(0);
         Volume.setValue(1);
         
+        Settings.setOnAction(new EventHandler<ActionEvent>() {
+        	@Override
+        	public void handle(ActionEvent e) {
+        		settings.start();
+        	}
+        });
         
 		restart.setOnAction(new EventHandler<ActionEvent>() {
 			@Override

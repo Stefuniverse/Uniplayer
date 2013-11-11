@@ -103,6 +103,7 @@ public class Playlist_Entry extends HBox {
 		return this.l.getText();
 	}
 	public void setLStyle(final String Style) {
+		
 		this.l.setStyle(Style);
 		
 	}
