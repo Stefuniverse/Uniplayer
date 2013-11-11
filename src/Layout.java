@@ -40,7 +40,7 @@ public class Layout extends Application {
 									+ "-fx-border-width: 2;"
 									+ "-fx-border-color: white;");
 	
-	static final double Playlist_Width = 300.0;
+	static final double Playlist_Width = 200.0;
 	
 	static final String Layout_Button = ("-fx-background-color: null;");
 	
@@ -216,15 +216,16 @@ public class Layout extends Application {
         pS.setHeight(bounds.getHeight());
        
         Mip.getslider().setMinWidth(pS.getWidth()-80);
+        list.setMaxWidth(Playlist_Width);
         list.setMinWidth(Playlist_Width);
-        list.setMinHeight(pS.getHeight()*0.8);
+        list.setMinHeight(pS.getHeight()*0.7);
         list.setStyle(Layout_Playlist);
         
         menu.setMinWidth(pS.getWidth());
         menu.setMaxHeight(pS.getHeight()*0.2);
         menu.setStyle(Layout_Panel);
         menu.setAlignment(Pos.BOTTOM_CENTER);
-        Mediafunctions.getmediaview().setFitWidth(pS.getWidth() - Playlist_Width);
+        Mediafunctions.getmediaview().setFitWidth(pS.getWidth()-Playlist_Width);
         Mediafunctions.getmediaview().setFitHeight(pS.getHeight()*0.8);
 
         Scene scene = new Scene(root);

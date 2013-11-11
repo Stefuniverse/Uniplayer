@@ -3,7 +3,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javafx.event.EventHandler;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -13,7 +12,6 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaPlayer.Status;
 import javafx.scene.media.MediaView;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 public class Mediafunctions {
@@ -62,10 +60,7 @@ public class Mediafunctions {
 	{
 		final Label l = new Label(Input);
 	
-		Screen screen = Screen.getPrimary();
-		Rectangle2D bounds = screen.getVisualBounds();
-	
-		l.setMinWidth(bounds.getWidth()*0.15);
+		l.setMinWidth(s.getWidth()*0.15);
 	
 		if (Title.size() % 2 != 0) {
 			l.setStyle(Layout_Main1);	
