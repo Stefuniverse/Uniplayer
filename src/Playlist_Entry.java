@@ -1,3 +1,4 @@
+import Interfaces.Styles;
 import javafx.event.EventHandler;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
@@ -5,35 +6,10 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 
-public class Playlist_Entry extends HBox {
+public class Playlist_Entry extends HBox implements Styles {
 	
 	HBox main;
 	Label l;
-	
-	static final String Layout_Main1 = ("-fx-background-color: #333333;"
-			+ "-fx-text-fill: white;"
-			+ "-fx-font-size: 12;");
-
-	static final String Layout_Main2 = ("-fx-background-color: #666666;"
-		+ "-fx-text-fill: white;"
-		+ "-fx-font-size: 12;");
-
-
-	static final String Layout_active1 = ("-fx-text-fill: #7DA1EB;"
-		+ "-fx-background-color: #333333;"
-		+ "-fx-font-size: 12;");
-
-	static final String Layout_active2 = ("-fx-text-fill: #7DA1EB;"
-		+ "-fx-background-color: #666666;"
-		+ "-fx-font-size: 12;");
-
-	static final String Layout_Action1 = ("-fx-text-fill: #FF6600;"
-		+ "-fx-background-color: #333333;"
-		+ "-fx-font-size: 12;");
-
-	static final String Layout_Action2 = ("-fx-text-fill: #FF6600;"
-		+ "-fx-background-color: #666666;"
-		+ "-fx-font-size: 12;");
 	
 
 	public Playlist_Entry(String Input, final Stage s, final Songprogress Mip) {

@@ -1,6 +1,8 @@
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
+import Interfaces.Styles;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -10,40 +12,9 @@ import javafx.scene.media.MediaPlayer.Status;
 import javafx.scene.media.MediaView;
 import javafx.stage.Stage;
 
-public class Mediafunctions {
+public class Mediafunctions implements Styles {
 	
-	static final String Layout_Main1 = ("-fx-background-color: #333333;"
-			+ "-fx-text-fill: white;"
-			+ "-fx-font-size: 12;");
-
-	static final String Layout_Main2 = ("-fx-background-color: #666666;"
-		+ "-fx-text-fill: white;"
-		+ "-fx-font-size: 12;");
-
-
-	static final String Layout_active1 = ("-fx-text-fill: #7DA1EB;"
-		+ "-fx-background-color: #333333;"
-		+ "-fx-font-size: 12;");
-
-	static final String Layout_active2 = ("-fx-text-fill: #7DA1EB;"
-		+ "-fx-background-color: #666666;"
-		+ "-fx-font-size: 12;");
-
-	static final String Layout_Action1 = ("-fx-text-fill: #FF6600;"
-		+ "-fx-background-color: #333333;"
-		+ "-fx-font-size: 12;");
-
-	static final String Layout_Action2 = ("-fx-text-fill: #FF6600;"
-		+ "-fx-background-color: #666666;"
-		+ "-fx-font-size: 12;");
-
-	static final String Layout_Playlist = ("-fx-background-color: #333333;"
-									+ "-fx-border-width: 2;"
-									+ "-fx-border-color: white;");
-
-	static final String Layout_Panel = ("-fx-background-color: #333333;"
-								+ "-fx-border-width: 2;"
-								+ "-fx-border-color: white;");
+	
 	
 	static List<String> URL = new LinkedList<String>();
     static List<Playlist_Entry> Title = new ArrayList<Playlist_Entry>();
@@ -133,6 +104,3 @@ public class Mediafunctions {
 				return URL;
 			}
 }
-
-
-

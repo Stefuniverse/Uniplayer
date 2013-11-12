@@ -83,6 +83,7 @@ public class Layout extends Application {
 	@Override
 	public void start(final Stage pS)
     {
+		final settings set = new settings();
         startpause.setGraphic(new ImageView(pause));
         prev.setGraphic(new ImageView(Prev));
         next.setGraphic(new ImageView(Next));
@@ -104,7 +105,7 @@ public class Layout extends Application {
         Settings.setOnAction(new EventHandler<ActionEvent>() {
         	@Override
         	public void handle(ActionEvent e) {
-        		settings.start();
+        		set.start();
         	}
         });
         
