@@ -30,25 +30,24 @@ public class Songprogress extends Thread {
 		
 		while (true) {
 			
-			try {
-				sleep(100);
-			}
-			catch(InterruptedException ex) {
-		
-			}
+			pstop();
+				
 			if (check != null) {
 		
 				while (check.getStatus() == Status.PLAYING) {
 			
 					slide.setValue(check.getCurrentTime().toSeconds());
-			
-					try {
-						sleep(100);
-					}
-					catch(InterruptedException ex) {
-					}
+					pstop();
 				}
 			}
+		}
+	}
+	
+	public void pstop() {
+		try {
+			sleep(100);
+		}
+		catch(InterruptedException ex) {
 		}
 	}
 	

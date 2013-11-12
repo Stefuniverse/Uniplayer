@@ -30,17 +30,11 @@ import javafx.stage.Stage;
 
 import javax.swing.JFileChooser;
 
-public class Layout extends Application {
+import Interfaces.Options_playlist;
+import Interfaces.Styles;
+
+public class Layout extends Application implements Styles, Options_playlist {
 	
-	static final String Layout_Playlist = ("-fx-background-color: #333333;"
-										+ "-fx-border-width: 2;"
-										+ "-fx-border-color: white;");
-	
-	static final String Layout_Panel = ("-fx-background-color: #333333;"
-									+ "-fx-border-width: 2;"
-									+ "-fx-border-color: white;");
-	
-	static final double Playlist_Width = 300.0;
 	
 	static final String Layout_Button = ("-fx-background-color: null;");
 	
@@ -183,7 +177,11 @@ public class Layout extends Application {
             }
 		});
         
-        //Layout
+        refresh(pS);
+    }
+	
+	public void refresh(Stage pS) {
+        
         menuFile.getItems().addAll(playatonce,playlater,Settings);
         menubar.getMenus().addAll(menuFile);
         restart.setScaleX(0.5);
@@ -209,7 +207,7 @@ public class Layout extends Application {
         bb.setAlignment(Pos.CENTER);
         pb.setAlignment(Pos.CENTER);
        
-        list.setPadding(new Insets(20, 0, 0, 5));
+
         root.setBottom(menu);
         root.setRight(list);
         root.setCenter(Mediafunctions.getmediaview());
@@ -239,8 +237,9 @@ public class Layout extends Application {
         scene.setFill(Color.BLACK);
         pS.setScene(scene);
         pS.show();
-	        	
 	}
+	        	
+	
 	
 	@SuppressWarnings("deprecation")
 	public void choosefile(Stage pS) {

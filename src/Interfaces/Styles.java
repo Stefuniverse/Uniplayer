@@ -34,4 +34,5 @@ public interface Styles {
 	static final String Layout_Panel = ("-fx-background-color: #333333;"
 								+ "-fx-border-width: 2;"
 								+ "-fx-border-color: white;");
+	
 }
