@@ -44,4 +44,17 @@ public class settingsitem extends HBox {
 	        this.getChildren().addAll(value, slider);
 		}
 	}
+	public boolean getcheckbox1() {
+		return checkbox1.isSelected();
+	}
+	public boolean getcheckbox2() {
+		try {
+			return checkbox2.isSelected();
+		} catch (NullPointerException e) {
+			return true;
+		}
+	}
+	public double getValue() {
+		return slider.getValue();
+	}
 }

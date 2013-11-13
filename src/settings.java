@@ -1,3 +1,4 @@
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -8,9 +9,10 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 
-public class settings {
+public class settings{
 	
 	final Stage pS;
+	final Stage Main;
 	final VBox optionlister;
 	final HBox Buttons;
 	final BorderPane root;
@@ -18,8 +20,9 @@ public class settings {
 	final Button save;
 	final Button cancel;
 	
-	public settings() {
+	public settings(Stage main) {
 		pS = new Stage();
+		Main = main;
 		optionlister = new VBox();
 		Buttons = new HBox();
 		root = new BorderPane();
@@ -27,7 +30,7 @@ public class settings {
 		save = new Button("Save");
 		cancel = new Button("Cancel");
 		
-		settingsitem Playlist = new settingsitem(true, true, "length of the Playlist", 200.0, 600.0);
+		final settingsitem Playlist = new settingsitem(true, true, "length of the Playlist", 200.0, 600.0);
 		
 		optionlister.getChildren().addAll(Playlist);
 		Buttons.getChildren().addAll(save, cancel);
@@ -44,7 +47,7 @@ public class settings {
 		save.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				System.out.println("Still working on it");
+				Layout.playlist_refresh(Main, Playlist.getcheckbox1(), Playlist.getcheckbox2(), Playlist.getValue());
 			}
 		});
 		

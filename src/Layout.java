@@ -30,13 +30,13 @@ import javafx.stage.Stage;
 
 import javax.swing.JFileChooser;
 
-import Interfaces.Options_playlist;
 import Interfaces.Styles;
 
-public class Layout extends Application implements Styles, Options_playlist {
+public class Layout extends Application implements Styles {
 	
 	
 	static final String Layout_Button = ("-fx-background-color: null;");
+	static double Playlist_Width = 300;
 	
 	
 	final Image pause = new Image(getClass().getResourceAsStream("ressources/Pause.png"));
@@ -46,14 +46,14 @@ public class Layout extends Application implements Styles, Options_playlist {
 	final Image beginning = new Image(getClass().getResourceAsStream("ressources/beginning.png"));
 	final Image sound = new Image(getClass().getResourceAsStream("ressources/sound.png"));
 	
-	final BorderPane root = new BorderPane();
+	final static BorderPane root = new BorderPane();
 	final BorderPane UIe = new BorderPane();
 	final HBox volumec = new HBox();
 	final HBox progc = new HBox();
     final HBox bb = new HBox();
     final HBox pb = new HBox();
     final VBox menu = new VBox();
-    final VBox list = new VBox();
+    final static VBox list = new VBox();
 
     final Button startpause = new Button();
     final Button prev = new Button();
@@ -77,7 +77,7 @@ public class Layout extends Application implements Styles, Options_playlist {
 	@Override
 	public void start(final Stage pS)
     {
-		final settings set = new settings();
+		final settings set = new settings(pS);
         startpause.setGraphic(new ImageView(pause));
         prev.setGraphic(new ImageView(Prev));
         next.setGraphic(new ImageView(Next));
@@ -209,7 +209,6 @@ public class Layout extends Application implements Styles, Options_playlist {
        
 
         root.setBottom(menu);
-        root.setRight(list);
         root.setCenter(Mediafunctions.getmediaview());
         root.setTop(menubar);
         Screen screen = Screen.getPrimary();
@@ -221,11 +220,6 @@ public class Layout extends Application implements Styles, Options_playlist {
         pS.setHeight(bounds.getHeight());
        
         Mip.getslider().setMinWidth(pS.getWidth()-80);
-        list.setMaxWidth(Playlist_Width);
-        list.setMinWidth(Playlist_Width);
-        list.setMinHeight(pS.getHeight()*0.7);
-        list.setStyle(Layout_Playlist);
-        
         menu.setMinWidth(pS.getWidth());
         menu.setMaxHeight(pS.getHeight()*0.2);
         menu.setStyle(Layout_Panel);
@@ -235,8 +229,30 @@ public class Layout extends Application implements Styles, Options_playlist {
 
         Scene scene = new Scene(root);
         scene.setFill(Color.BLACK);
+        playlist_refresh(pS, true, false, 300.0);
         pS.setScene(scene);
         pS.show();
+	}
+	
+	public static void playlist_refresh(Stage pS, Boolean visible, Boolean extrawindow, double Playlist_width) {
+		
+		Playlist_Width = Playlist_width;
+		list.setMaxWidth(Playlist_Width);
+        list.setMinWidth(Playlist_Width);
+        list.setMinHeight(pS.getHeight()*0.7);
+        list.setStyle(Layout_Playlist);
+        
+        if (visible  && !extrawindow) {
+        	root.setRight(list);
+        }
+        else if (visible && extrawindow){
+        	Stage playlist = new Stage();
+        	Scene playlists = new Scene(list, Playlist_Width,pS.getHeight()*0.7);
+        	playlist.setScene(playlists);
+        	playlist.setTitle("Uniplayer - Playlist");
+        	playlist.show();
+        }
+        
 	}
 	        	
 	
