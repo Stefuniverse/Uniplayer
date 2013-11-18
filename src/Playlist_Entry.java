@@ -11,9 +11,10 @@ public class Playlist_Entry extends HBox implements Styles {
 	HBox main;
 	Label l;
 	
-
+	//This is a costumized HBox, wich I need in order to add more elements to a Plylist entry
 	public Playlist_Entry(String Input, final Stage s, final Songprogress Mip) {
 		
+		//Creates a new Label and add all styleinformations from the interface style with all eventHandlers
 		l = new Label(Input);
 		
 		l.setMinWidth(s.getWidth()*0.15);
@@ -71,13 +72,16 @@ public class Playlist_Entry extends HBox implements Styles {
 				}        
 			}
 		});
+		//At the moment only this label is added to the HBox, but you can include nearly everything in this Box
 		this.getChildren().addAll(l);
 	}
 	
+	//Gets the text of the Label
 	public String getText() {
 		
 		return this.l.getText();
 	}
+	//Sets the style of the Label
 	public void setLStyle(final String Style) {
 		
 		this.l.setStyle(Style);
